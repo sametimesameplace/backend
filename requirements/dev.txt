@@ -2,3 +2,4 @@
 psycopg2-binary==2.9.9
 ipython==8.16.1
 ipdb==0.13.13
+selenium==4.14.0
