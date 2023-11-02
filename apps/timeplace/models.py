@@ -1,6 +1,7 @@
 from django.db import models
 
 from apps.core.models import CreatedModifiedDateTimeBase
+from apps.user.models import User
 
 
 class Interest(CreatedModifiedDateTimeBase):
@@ -22,3 +23,18 @@ class Activity(CreatedModifiedDateTimeBase):
     
     def __str__(self):
         return self.name
+
+
+class TimePlace(CreatedModifiedDateTimeBase):
+    """Model to store the Timeplaces that a user creates
+    """
+    user_id = models.ForeignKey(
+        "user.User", on_delete=models.CASCADE)
+    start = models.DateTimeField()
+    end = models.DateTimeField()
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    description = models.CharField(max_length=500)
+    cleanup = models.BooleanField(default=False)
+    interests = models.ManyToManyField("timeplace.Interest")
+    activities = models.ManyToManyField("timeplace.Activity")
