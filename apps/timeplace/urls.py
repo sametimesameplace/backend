@@ -1,8 +1,13 @@
 from django.urls import path
+from rest_framework import routers
 
 from apps.timeplace import views
 
 
-urlpatterns = [
+router = routers.SimpleRouter()
+router.register("api/v1/interest", views.InterestViewSet)
+router.register("api/v1/activity", views.ActivityViewSet)
 
+urlpatterns = [
+    *router.urls,
 ]
