@@ -15,7 +15,7 @@ class InterestViewSet(viewsets.ModelViewSet):
     pagination_class = StandardPagination
     
     queryset = (models.Interest.objects.all()
-                .order_by('-id'))
+                .order_by('name'))
 
     serializer_class = serializers.InterestModelSerializer
 
@@ -25,6 +25,6 @@ class ActivityViewSet(viewsets.ModelViewSet):
     pagination_class = StandardPagination
     
     queryset = (models.Activity.objects.all()
-                .order_by('-id'))
+                .order_by('name'))
 
     serializer_class = serializers.ActivityModelSerializer
