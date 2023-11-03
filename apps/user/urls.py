@@ -1,7 +1,12 @@
 from django.urls import path
+from rest_framework import routers
+
 from apps.user import views
+
+router = routers.SimpleRouter()
+router.register("api/v1/user", views.ListUsers)
 
 
 urlpatterns = [
-    path("list/", views.user_list, name="user-list"),
+    *router.urls,
 ]

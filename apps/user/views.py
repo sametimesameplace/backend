@@ -1,14 +1,13 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+
 from .models import User
+from .serializers import UserModelSerializer
+from .permissions import UserSuperDeleteOnly
 
-# Create your views here.
 
-
-def user_list(request):
-    users = User.objects.all()
-
-    context = {
-        "users": users,
-    }
-
-    return render(request, "user/user_list.html", context)
+class ListUsers(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserModelSerializer
+    permission_classes = [
+        UserSuperDeleteOnly,
+    ]
