@@ -21,7 +21,7 @@ class TimePlaceModelSerializer(serializers.ModelSerializer):
     user_id = UserModelSerializer()
     interests = InterestModelSerializer(many=True)
     activities = ActivityModelSerializer(many=True)
-    
+
     class Meta:
         model = models.TimePlace
         fields = [
@@ -35,7 +35,7 @@ class TimePlaceModelSerializer(serializers.ModelSerializer):
             "interests",
             "activities"
         ]
-                  
+
     def validate(self, data):
         if data['start'] < datetime.now():
             raise serializers.ValidationError(
