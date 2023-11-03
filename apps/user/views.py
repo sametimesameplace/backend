@@ -2,12 +2,15 @@ from typing import Optional
 
 from django.contrib.auth import authenticate
 
+from rest_framework import viewsets
 from rest_framework import status  
 from rest_framework.views import APIView  
 from rest_framework.response import Response  
 from rest_framework.authtoken.models import Token 
 
 from .models import User
+from .serializers import UserModelSerializer
+from .permissions import UserSuperDeleteOnly
 
 
 class UserLoginView(APIView):
@@ -34,3 +37,11 @@ class UserLoginView(APIView):
             {"token": token.key},
             status=status.HTTP_200_OK
         )
+
+
+class ListUsers(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserModelSerializer
+    permission_classes = [
+        UserSuperDeleteOnly,
+    ]
