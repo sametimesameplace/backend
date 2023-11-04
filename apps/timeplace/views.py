@@ -36,6 +36,8 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
     
     queryset = models.TimePlace.objects.all().order_by("-created_at")
     
+    serializer_class = serializers.TimePlaceModelSerializer
+    
     def perform_create(self, serializer):
         """The logged in user is always the author
         """
