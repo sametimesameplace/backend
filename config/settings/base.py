@@ -26,6 +26,8 @@ THIRD_PARTY_APPS = [
 
 INSTALLED_APPS = [*DEFAULT_APPS, *CUSTOM_APPS, *THIRD_PARTY_APPS]
 
+AUTHENTICATION_BACKENDS = ['apps.user.backends.EmailOrUsernameModelBackend']
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
