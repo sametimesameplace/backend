@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timezone
+import pytz
 from rest_framework import serializers
 
 from apps.user.serializers import UserModelSerializer
@@ -17,7 +18,47 @@ class ActivityModelSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class TimePlaceModelSerializer(serializers.ModelSerializer):
+class TimePlaceModelCreateUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for the TimePlace model that takes interests and
+    activities as a list of integers and does not include the user_id
+    """
+    class Meta:
+        model = models.TimePlace
+        fields = [
+            "id",
+            "start",
+            "end",
+            "latitude",
+            "longitude",
+            "description",
+            "interests",
+            "activities"
+        ]
+
+    def validate(self, attrs):
+        # We need to have all datetimes in the same timezone
+        start_tz = attrs["start"].replace(tzinfo=pytz.UTC)
+        end_tz = attrs["end"].replace(tzinfo=pytz.UTC)
+        
+        if start_tz < datetime.now(timezone.utc):
+            raise serializers.ValidationError(
+                "Start date has to be in the future.")
+        if end_tz <= start_tz:
+            raise serializers.ValidationError(
+                "End date has to be after start date.")
+        if attrs["latitude"] > 90 or attrs["latitude"] < -90:
+            raise serializers.ValidationError(
+                "Latitude has to be between +90° and -90°")
+        if attrs["longitude"] > 180 or attrs["longitude"] < -180:
+            raise serializers.ValidationError(
+                "Longitude has to be between +180° and -180°")
+        return attrs
+
+
+class TimePlaceModelViewSerializer(serializers.ModelSerializer):
+    """Serializer for the TimePlace model that includes detailed
+    information about the user, interests and activities
+    """
     user_id = UserModelSerializer()
     interests = InterestModelSerializer(many=True)
     activities = ActivityModelSerializer(many=True)
@@ -35,18 +76,3 @@ class TimePlaceModelSerializer(serializers.ModelSerializer):
             "interests",
             "activities"
         ]
-
-    def validate(self, data):
-        if data['start'] < datetime.now():
-            raise serializers.ValidationError(
-                "Start date has to be in the future.")
-        if data["end"] <= data["start"]:
-            raise serializers.ValidationError(
-                "End date has to be after start date.")
-        if data["latitude"] > 90 or data["latitude"] < -90:
-            raise serializers.ValidationError(
-                "Latitude has to be between +90° and -90°")
-        if data["longitude"] > 180 or data["longitude"] < -180:
-            raise serializers.ValidationError(
-                "Longitude has to be between +180° and -180°")
-        return data
