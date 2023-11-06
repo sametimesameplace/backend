@@ -8,12 +8,8 @@ class User(AbstractUser):
                              blank=True, help_text="Your profession")
     bio = models.TextField(default='', blank=True)
 
-    mfa_secret = models.CharField(max_length=255, default='')
-    date_joined =  models.DateField(default=timezone.now)
-
 
 class UserProfile(models.Model):
-    id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     hometown = models.CharField(max_length=255)
@@ -22,29 +18,36 @@ class UserProfile(models.Model):
     GENDER_CHOICES = [
         ('M', 'Male'),
         ('F', 'Female'),
-        ('O', 'Other'),
+        ('O', 'Diverse'),
     ]
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     phone = models.CharField(max_length=20)
     profile_email = models.EmailField()
+    languages = models.ManyToManyField("user.Language", through="UserLanguage")
 
 
 class Language(models.Model):
-    id = models.AutoField(primary_key=True)
     lang = models.CharField(max_length=255)
-    
+
     def __str__(self):
         return self.lang
+
 
 class UserLanguage(models.Model):
     userprofile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     language = models.ForeignKey(Language, on_delete=models.CASCADE)
     level_choices = [
-        ('Beginner', 'Beginner'),
-        ('Intermediate', 'Intermediate'),
-        ('Advanced', 'Advanced'),
+        ('Learning', 'Learning'),
+        ('Fluent', 'Fluent'),
+        ('Preferred', 'Preferred'),
     ]
     level = models.CharField(max_length=20, choices=level_choices)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['userprofile', 'language'], name='unique language')
+        ]
 
     def __str__(self):
         return f"{self.userprofile} - {self.language} - {self.level}"
