@@ -9,13 +9,13 @@ from . import models
 class InterestModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Interest
-        fields = "__all__"
+        fields = ["id","name"]
 
 
 class ActivityModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Activity
-        fields = "__all__"
+        fields = ["id","name"]
 
 
 class TimePlaceModelCreateUpdateSerializer(serializers.ModelSerializer):
