@@ -8,7 +8,8 @@ from apps.user.models import User
 
 
 class TestInterestEndpoints(APITestCase):
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         models.Interest.objects.bulk_create(
             [
                 models.Interest(name="Cars"),
@@ -17,20 +18,28 @@ class TestInterestEndpoints(APITestCase):
                 models.Interest(name="Bars"),
             ]
         )
-        self.superuser = User.objects.create_superuser(
+        superuser = User.objects.create_superuser(
             username="admin",
             email="admin@stsp.com",
             password="admin@2023",
         )
-        self.supertoken = Token.objects.create(user=self.superuser)
-        self.user = User.objects.create_user(
+        Token.objects.create(user=superuser)
+        user = User.objects.create_user(
             username="user",
             email="user@stsp.com",
             password="user@2023",
         )
-        self.usertoken = Token.objects.create(user=self.user)
+        Token.objects.create(user=user)
+        super().setUpClass()
+        
+    def setUp(self):
+        self.supertoken = Token.objects.get(user__username="admin")
+        self.usertoken = Token.objects.get(user__username="user")
 
     def testListView(self):
+        """Test if the GET request to the base entpoint returns the expected
+        result.
+        """
         url = reverse("interest-list")
         response = self.client.get(url)
         expected_content = {
@@ -48,17 +57,25 @@ class TestInterestEndpoints(APITestCase):
         self.assertEqual(dict(response.data), expected_content)
 
     def testPostForbiddenNotAuthenticated(self):
+        """Test if POST request without any authorization returns 401.
+        """
         url = reverse("interest-list")
         response = self.client.post(url, {"name": "Planes"})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def testPostForbiddenAuthenticatedUser(self):
+        """Test if POST request from normal user without admin rights
+        returns 403.
+        """
         url = reverse("interest-list")
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.usertoken.key)
         response = self.client.post(url, {"name": "Planes"})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def testPostAsAdmin(self):
+        """Test if POST request with admin token successfully creates
+        new object
+        """
         url = reverse("interest-list")
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.supertoken.key)
         response = self.client.post(url, {"name": "Planes"})
