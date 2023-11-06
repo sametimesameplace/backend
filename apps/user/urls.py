@@ -8,5 +8,6 @@ router.register("api/v1/user", views.ListUsers)
 
 
 urlpatterns = [
+    path("api/v1/login", views.UserLoginView.as_view(), name="login-token"),
     *router.urls,
 ]
