@@ -31,7 +31,7 @@ class TestInterestEndpoints(APITestCase):
         )
         Token.objects.create(user=user)
         super().setUpClass()
-        
+
     def setUp(self):
         self.supertoken = Token.objects.get(user__username="admin")
         self.usertoken = Token.objects.get(user__username="user")
@@ -56,28 +56,48 @@ class TestInterestEndpoints(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(dict(response.data), expected_content)
 
-    def testPostForbiddenNotAuthenticated(self):
-        """Test if POST request without any authorization returns 401.
+    def testPostPutDeleteForbiddenNotAuthenticated(self):
+        """Test if unsafe requests without any authorization return 401.
         """
         url = reverse("interest-list")
-        response = self.client.post(url, {"name": "Planes"})
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        detail_url = reverse("interest-detail", args=(4,))
 
-    def testPostForbiddenAuthenticatedUser(self):
-        """Test if POST request from normal user without admin rights
-        returns 403.
+        post_response = self.client.post(url, {"name": "Planes"})
+        self.assertEqual(post_response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        put_response = self.client.put(detail_url, {"name": "Airplanes"})
+        self.assertEqual(put_response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def testPostPutDeleteForbiddenAuthenticatedUser(self):
+        """Test if unsafe requests from normal user without admin rights
+        return 403.
         """
         url = reverse("interest-list")
+        detail_url = reverse("interest-detail", args=(4,))
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.usertoken.key)
-        response = self.client.post(url, {"name": "Planes"})
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def testPostAsAdmin(self):
-        """Test if POST request with admin token successfully creates
-        new object
+        post_response = self.client.post(url, {"name": "Planes"})
+        self.assertEqual(post_response.status_code, status.HTTP_403_FORBIDDEN)
+
+        put_response = self.client.put(detail_url, {"name": "Airplanes"})
+        self.assertEqual(put_response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def testPostPutDeleteAsAdmin(self):
+        """Test if unsafe request with admin token successfully create, modify
+        and delete new object.
         """
         url = reverse("interest-list")
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.supertoken.key)
-        response = self.client.post(url, {"name": "Planes"})
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        post_response = self.client.post(url, {"name": "Planes"})
+        self.assertEqual(post_response.status_code, status.HTTP_201_CREATED)
+
+        detail_url = reverse("interest-detail", args=(post_response.data["id"],))
+
+        put_response = self.client.put(detail_url, {"name": "Airplanes"})
+        self.assertEqual(put_response.status_code, status.HTTP_200_OK)
+
+        delete_response = self.client.delete(detail_url)
+        self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
 
