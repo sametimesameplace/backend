@@ -9,7 +9,7 @@ from apps.user.models import User
 
 class TestInterestEndpoints(APITestCase):
     @classmethod
-    def setUpClass(cls):
+    def setUpTestData(cls):
         models.Interest.objects.bulk_create(
             [
                 models.Interest(name="Cars"),
@@ -18,23 +18,18 @@ class TestInterestEndpoints(APITestCase):
                 models.Interest(name="Bars"),
             ]
         )
-        superuser = User.objects.create_superuser(
-            username="admin",
-            email="admin@stsp.com",
+        cls.superuser = User.objects.create_superuser(
+            username="admin_interest",
+            email="admin_interest@stsp.com",
             password="admin@2023",
         )
-        Token.objects.create(user=superuser)
-        user = User.objects.create_user(
-            username="user",
-            email="user@stsp.com",
+        cls.supertoken = Token.objects.create(user=cls.superuser)
+        cls.user = User.objects.create_user(
+            username="user_interest",
+            email="user_interest@stsp.com",
             password="user@2023",
         )
-        Token.objects.create(user=user)
-        super().setUpClass()
-
-    def setUp(self):
-        self.supertoken = Token.objects.get(user__username="admin")
-        self.usertoken = Token.objects.get(user__username="user")
+        cls.usertoken = Token.objects.create(user=cls.user)
 
     def testListView(self):
         """Test if the GET request to the base entpoint returns the expected
@@ -100,4 +95,95 @@ class TestInterestEndpoints(APITestCase):
 
         delete_response = self.client.delete(detail_url)
         self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class TestActivityEndpoints(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        models.Activity.objects.bulk_create(
+            [
+                models.Activity(name="Carneval"),
+                models.Activity(name="Airsoft"),
+                models.Activity(name="Football"),
+                models.Activity(name="Bars"),
+            ]
+        )
+        cls.superuser = User.objects.create_superuser(
+            username="admin_activity",
+            email="admin_activity@stsp.com",
+            password="admin@2023",
+        )
+        cls.supertoken = Token.objects.create(user=cls.superuser)
+        cls.user = User.objects.create_user(
+            username="user_activity",
+            email="user_activity@stsp.com",
+            password="user@2023",
+        )
+        cls.usertoken = Token.objects.create(user=cls.user)
+
+    def testListView(self):
+        """Test if the GET request to the base entpoint returns the expected
+        result.
+        """
+        url = reverse("activity-list")
+        response = self.client.get(url)
+        expected_content = {
+            "count": 4,
+            "next": None,
+            "previous": None,
+            "results": [
+                {"id": 2, "name": "Airsoft"},
+                {"id": 4, "name": "Bars"},
+                {"id": 1, "name": "Carneval"},
+                {"id": 3, "name": "Football"},
+            ],
+        }
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(dict(response.data), expected_content)
+
+    def testPostPutDeleteForbiddenNotAuthenticated(self):
+        """Test if unsafe requests without any authorization return 401.
+        """
+        url = reverse("activity-list")
+        detail_url = reverse("activity-detail", args=(4,))
+
+        post_response = self.client.post(url, {"name": "Go swimming"})
+        self.assertEqual(post_response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        put_response = self.client.put(detail_url, {"name": "Diving"})
+        self.assertEqual(put_response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def testPostPutDeleteForbiddenAuthenticatedUser(self):
+        """Test if unsafe requests from normal user without admin rights
+        return 403.
+        """
+        url = reverse("activity-list")
+        detail_url = reverse("activity-detail", args=(4,))
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.usertoken.key)
+
+        post_response = self.client.post(url, {"name": "Go swimming"})
+        self.assertEqual(post_response.status_code, status.HTTP_403_FORBIDDEN)
+
+        put_response = self.client.put(detail_url, {"name": "Diving"})
+        self.assertEqual(put_response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def testPostPutDeleteAsAdmin(self):
+        """Test if unsafe request with admin token successfully create, modify
+        and delete new object.
+        """
+        url = reverse("activity-list")
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.supertoken.key)
+
+        post_response = self.client.post(url, {"name": "Go swimming"})
+        self.assertEqual(post_response.status_code, status.HTTP_201_CREATED)
+
+        detail_url = reverse("activity-detail", args=(post_response.data["id"],))
+
+        put_response = self.client.put(detail_url, {"name": "Diving"})
+        self.assertEqual(put_response.status_code, status.HTTP_200_OK)
+
+        delete_response = self.client.delete(detail_url)
+        self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
+
 
