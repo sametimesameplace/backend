@@ -198,7 +198,7 @@ class TestTimePlaceEndpoints(APITestCase):
 
         cls.activity1 = models.Activity.objects.create(name="Swimming")
         cls.activity2 = models.Activity.objects.create(name="Go Party")
-        
+
         # Create a superuser and two different users including tokens
         cls.superuser = User.objects.create_superuser(
             username="admin_tp",
@@ -230,6 +230,28 @@ class TestTimePlaceEndpoints(APITestCase):
         cls.tp1.interests.add(cls.interest1.id, cls.interest2.id)
         cls.tp1.activities.add(cls.activity1.id)
 
+        cls.tp2 = models.TimePlace.objects.create(
+            user_id=cls.user1,
+            start="2025-12-02T12:00+01:00",
+            end="2025-12-02T15:00+01:00",
+            latitude=20.123456,
+            longitude=0.123456,
+            description="I want to run more tests",
+        )
+        cls.tp2.interests.add(cls.interest1.id)
+        cls.tp2.activities.add(cls.activity1.id, cls.activity2.id)
+
+        cls.tp3 = models.TimePlace.objects.create(
+            user_id=cls.user2,
+            start="2025-12-02T12:00+01:00",
+            end="2025-12-02T15:00+01:00",
+            latitude=20.123456,
+            longitude=0.123456,
+            description="I want to run tests with different users",
+        )
+        cls.tp3.interests.add(cls.interest1.id)
+        cls.tp3.activities.add(cls.activity2.id)
+
     def testUnauthenticatedForbidden(self):
         """Test if an unauthenticated user can use any method on TimePlace endpoint.
         """
@@ -238,10 +260,24 @@ class TestTimePlaceEndpoints(APITestCase):
         self.assertEqual(get_response.status_code, status.HTTP_401_UNAUTHORIZED)
         post_response = self.client.post(url, {"description":"test"})
         self.assertEqual(post_response.status_code, status.HTTP_401_UNAUTHORIZED)
-        
+
         url = reverse("timeplace-detail", args=(self.tp1.id,))
         put_response = self.client.post(url, {"description":"test"})
         self.assertEqual(put_response.status_code, status.HTTP_401_UNAUTHORIZED)
         delete_response = self.client.post(url)
         self.assertEqual(delete_response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def testListTimePlaceAuthenticatedUser(self):
+        url = reverse("timeplace-list")
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
+        get_response = self.client.get(url)
+        self.assertEqual(get_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(get_response.data["count"], 2)
+
+    def testListTimePlaceSuperUser(self):
+        url = reverse("timeplace-list")
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.supertoken.key)
+        get_response = self.client.get(url)
+        self.assertEqual(get_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(get_response.data["count"], 3)
 
