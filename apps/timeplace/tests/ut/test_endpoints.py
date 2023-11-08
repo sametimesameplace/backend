@@ -31,7 +31,7 @@ class TestInterestEndpoints(APITestCase):
         )
         cls.usertoken = Token.objects.create(user=cls.user)
 
-    def testListView(self):
+    def test_list_view_returns_correct_format(self):
         """Test if the GET request to the base Interest endpoint returns the 
         expected result.
         """
@@ -51,7 +51,7 @@ class TestInterestEndpoints(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(dict(response.data), expected_content)
 
-    def testPostPutDeleteForbiddenNotAuthenticated(self):
+    def test_unauthenticated_user_unsafe_methods_forbidden(self):
         """Test if unsafe requests to the Interest endpoint without any 
         authorization return 401.
         """
@@ -65,7 +65,7 @@ class TestInterestEndpoints(APITestCase):
         self.assertEqual(put_response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-    def testPostPutDeleteForbiddenAuthenticatedUser(self):
+    def test_authenticated_user_unsafe_methods_forbidden(self):
         """Test if unsafe requests to the Interest endpoint from normal user 
         without admin rights return 403.
         """
@@ -79,7 +79,7 @@ class TestInterestEndpoints(APITestCase):
         put_response = self.client.put(detail_url, {"name": "Airplanes"})
         self.assertEqual(put_response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def testPostPutDeleteAsAdmin(self):
+    def test_superuser_unsafe_methods_successful(self):
         """Test if unsafe requests to the Interest endpoint with admin token 
         successfully create, modify and delete new object.
         """
@@ -122,7 +122,7 @@ class TestActivityEndpoints(APITestCase):
         )
         cls.usertoken = Token.objects.create(user=cls.user)
 
-    def testListView(self):
+    def test_list_view_returns_correct_format(self):
         """Test if the GET request to the base Activity endpoint returns the 
         expected result.
         """
@@ -142,7 +142,7 @@ class TestActivityEndpoints(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(dict(response.data), expected_content)
 
-    def testPostPutDeleteForbiddenNotAuthenticated(self):
+    def test_unauthenticated_user_unsafe_methods_forbidden(self):
         """Test if unsafe requests to the Activity endpoint without any 
         authorization return 401.
         """
@@ -156,7 +156,7 @@ class TestActivityEndpoints(APITestCase):
         self.assertEqual(put_response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-    def testPostPutDeleteForbiddenAuthenticatedUser(self):
+    def test_authenticated_user_unsafe_methods_forbidden(self):
         """Test if unsafe requests to the Activity endpoint from normal 
         user without admin rights return 403.
         """
@@ -170,7 +170,7 @@ class TestActivityEndpoints(APITestCase):
         put_response = self.client.put(detail_url, {"name": "Diving"})
         self.assertEqual(put_response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def testPostPutDeleteAsAdmin(self):
+    def test_superuser_unsafe_methods_successful(self):
         """Test if unsafe requests to the Activity endpoint with admin token 
         successfully create, modify and delete new object.
         """
@@ -252,7 +252,7 @@ class TestTimePlaceEndpoints(APITestCase):
         cls.tp3.interests.add(cls.interest1.id)
         cls.tp3.activities.add(cls.activity2.id)
 
-    def testUnauthenticatedForbidden(self):
+    def test_unauthenticated_user_forbidden(self):
         """Test if an unauthenticated user can use any method on TimePlace endpoint.
         """
         url = reverse("timeplace-list")
@@ -267,14 +267,18 @@ class TestTimePlaceEndpoints(APITestCase):
         delete_response = self.client.post(url)
         self.assertEqual(delete_response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def testListTimePlaceAuthenticatedUser(self):
+    def test_authenticated_user_list_has_only_own_items(self):
+        """Test if an authenticated user can only see it's own timeplaces.
+        """
         url = reverse("timeplace-list")
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
         get_response = self.client.get(url)
         self.assertEqual(get_response.status_code, status.HTTP_200_OK)
         self.assertEqual(get_response.data["count"], 2)
 
-    def testListTimePlaceSuperUser(self):
+    def test_superuser_list_has_all_items(self):
+        """Test if a superuser can see the timeplaces of all users.
+        """
         url = reverse("timeplace-list")
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.supertoken.key)
         get_response = self.client.get(url)
