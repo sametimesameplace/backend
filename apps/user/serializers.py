@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from rest_framework import serializers
 
 from datetime import date
@@ -84,11 +86,11 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
             "languages"
         )
 
-        def validate_birthday(self, birthday):
-            # Check if the birthday is in the past or age < 18
-            if birthday > timezone.now().date() or :
-                raise serializers.ValidationError("Invalid birthday")
-            return birthday
+        # def validate_birthday(self, birthday):
+        #     # Check if the birthday is in past (or age < 18)
+        #     if birthday > timezone.now().date():
+        #         raise serializers.ValidationError("Invalid birthday")
+        #     return birthday
 
 
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
