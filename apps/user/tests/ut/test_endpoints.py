@@ -14,21 +14,14 @@ class TestUserEndpoints(APITestCase):
 
     """
 
-    def setUp(self):
-        self.superuser = User.objects.create_superuser(
+    @classmethod
+    def setUpTestData(cls):
+        cls.superuser = User.objects.create_superuser(
             username="admin",
             email="admin@stsp.com",
-            password="admin@2023",
+            password="admin_2023",
         )
-        self.supertoken = Token.objects.create(user=self.superuser)
-
-        self.user = User.objects.create_user(
-            username="user_delete",
-            email="user_delete@stsp.com",
-            password="user_delete@2023",
-        )
-
-        self.usertoken = Token.objects.create(user=self.user)
+        cls.supertoken = Token.objects.create(user=cls.superuser)
 
     def test_user_list_authorized(self):
         """Tests that a list of users is returned for the admin only"""
@@ -54,6 +47,14 @@ class TestUserEndpoints(APITestCase):
 
     def test_delete_user(self):
         """Tests that a user can only be deleted by the superuser"""
+
+        self.user = User.objects.create_user(
+            username="user",
+            email="user@stsp.com",
+            password="user_2023",
+        )
+
+        self.usertoken = Token.objects.create(user=self.user)
 
         url = reverse("user-detail", args=(self.user.id,))
         response = self.client.delete(url)
