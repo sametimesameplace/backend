@@ -1,7 +1,11 @@
+# These code sections are used to initialise the Django framework in a script and ensure that it accesses the correct settings. 
+# File is started in its own directory: 'python load_languages.py'
 
+import sys
 import os
 import django
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.dev")
 django.setup()
 
