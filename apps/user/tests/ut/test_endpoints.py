@@ -55,17 +55,20 @@ class TestUserEndpoints(APITestCase):
     def test_delete_user(self):
         """Tests that a user can only be deleted by the superuser"""
 
-        self.user_for_deletion = User.objects.create_user(
+        user_for_deletion = User.objects.create_user(
             username="user1",
             email="user1@stsp.com",
             password="user1_2023",
         )
 
-        self.usertoken_for_deletion = Token.objects.create(user=self.user_for_deletion)
+        usertoken_for_deletion = Token.objects.create(user=user_for_deletion)
 
         url = reverse("user-detail", args=(self.user.id,))
+        self.client.credentials(
+            HTTP_AUTHORIZATION="Token " + usertoken_for_deletion.key
+        )
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         url = reverse("user-detail", args=(self.user.id,))
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.supertoken.key)
@@ -74,22 +77,23 @@ class TestUserEndpoints(APITestCase):
 
     def test_update_user(self):
         """Tests that a user can update their own data"""
-        self.user_for_updating = User.objects.create_user(
+
+        user_for_updating = User.objects.create_user(
             username="user2",
             email="user2@stsp.com",
             password="user2_2023",
         )
 
-        self.usertoken_for_updating = Token.objects.create(user=self.user_for_updating)
+        usertoken_for_updating = Token.objects.create(user=user_for_updating)
 
         new_data = {
             "username": "bob",
             "email": "bob@stsp.com",
             "password": "bob_2023",
         }
-        url = reverse("user-detail", args=(self.user_for_updating.id,))
+        url = reverse("user-detail", args=(user_for_updating.id,))
         self.client.credentials(
-            HTTP_AUTHORIZATION="Token " + self.usertoken_for_updating.key
+            HTTP_AUTHORIZATION="Token " + usertoken_for_updating.key
         )
         response = self.client.put(url, data=new_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
