@@ -56,4 +56,6 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
         """Limit the queryset to the author, 
         i.e the logged in user, for fetching/updating data
         """
+        if self.request.user.is_superuser:
+            return self.queryset
         return self.queryset.filter(user_id=self.request.user)
