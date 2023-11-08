@@ -3,14 +3,15 @@ from typing import Optional
 from django.contrib.auth import authenticate
 
 from rest_framework import viewsets
-from rest_framework import status  
-from rest_framework.views import APIView  
-from rest_framework.response import Response  
-from rest_framework.authtoken.models import Token 
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
 
-from .models import User
-from .serializers import UserModelSerializer
+from .models import User, UserProfile
+from .serializers import UserModelSerializer, UserProfileCreateSerializer, UserProfileUpdateSerializer, UserProfileRetrieveSerializer
 from .permissions import UserSuperDeleteOnly
+from apps.timeplace.permissions import IsAuthenticatedCreateOrSuperOrAuthor
 
 
 class UserLoginView(APIView):
@@ -21,8 +22,8 @@ class UserLoginView(APIView):
 
         # authenticate the user
         user: Optional[User] = authenticate(
-            username = username,
-            password = password,
+            username=username,
+            password=password,
         )
         if not user:
             return Response(
@@ -44,4 +45,12 @@ class ListUsers(viewsets.ModelViewSet):
     serializer_class = UserModelSerializer
     permission_classes = [
         UserSuperDeleteOnly,
+    ]
+
+
+class DisplayUserProfile(viewsets.ModelViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileRetrieveSerializer
+    permission_classes = [
+        IsAuthenticatedCreateOrSuperOrAuthor,
     ]
