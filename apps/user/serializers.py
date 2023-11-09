@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from datetime import date
+
 from . import models
 
 
@@ -23,4 +25,38 @@ class UserModelSerializer(serializers.ModelSerializer):
             "password",
             "email",
             "date_joined",
+            "bio",
+            "title"
         )
+
+class LanguageModelSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = models.Language
+        fields = ('id', 'lang')
+
+class UserLanguageModelSerializer(serializers.ModelSerializer):
+    # language = LanguageModelSerializer()
+    
+    class Meta:
+        model = models.UserLanguage
+        fields = ('id', 'userprofile', 'language', 'level')
+
+class UserProfileModelSerializer(serializers.ModelSerializer):
+    user = UserModelSerializer()
+    languages = UserLanguageModelSerializer(many=True)
+    age = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.UserProfile
+        fields = (
+            'id', 'user', 'name', 'hometown', 'slogan', 'birthday',
+            'gender', 'phone', 'profile_email', 'languages', 'age'
+        )
+
+    def get_age(self, obj):
+        today = date.today()
+        birthdate = obj.birthday
+        age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
+        return age
+    
