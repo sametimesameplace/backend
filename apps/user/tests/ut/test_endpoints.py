@@ -87,6 +87,20 @@ class TestUserEndpoints(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_user_no_email_given(self):
+        """Tests that a user cannot be created without an email"""
+
+        url = reverse("user-list")
+        response = self.client.post(
+            url,
+            data={
+                "username": "edith",
+                "password": "edith_2023",
+                "email": "",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_delete_user(self):
         """Tests that a user can only be deleted by the superuser"""
 
