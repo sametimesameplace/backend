@@ -262,6 +262,8 @@ class TestTimePlaceEndpoints(APITestCase):
         self.assertEqual(post_response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         url = reverse("timeplace-detail", args=(self.tp1.id,))
+        get_response = self.client.get(url)
+        self.assertEqual(get_response.status_code, status.HTTP_401_UNAUTHORIZED)
         put_response = self.client.post(url, {"description":"test"})
         self.assertEqual(put_response.status_code, status.HTTP_401_UNAUTHORIZED)
         delete_response = self.client.post(url)
@@ -285,3 +287,170 @@ class TestTimePlaceEndpoints(APITestCase):
         self.assertEqual(get_response.status_code, status.HTTP_200_OK)
         self.assertEqual(get_response.data["count"], 3)
 
+    def test_authenticated_user_can_create_timeplace_with_correct_data(self):
+        """Test if an authenticated user can create a timeplace with valid data.
+        """
+        url = reverse("timeplace-list")
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
+        post_response = self.client.post(url, {
+            "start":"2025-12-03T12:00+01:00",
+            "end":"2025-12-04T12:00+01:00",
+            "latitude":20.123456,
+            "longitude":-20.654321,
+            "description":"We need more tests here!",
+            "interests":[self.interest1.id],
+            "activities":[self.activity1.id]
+        })
+        self.assertEqual(post_response.status_code, status.HTTP_201_CREATED)
+
+    def test_timeplace_has_to_be_in_future(self):
+        """Test if an authenticated user can create a timeplace in the past.
+        """
+        url = reverse("timeplace-list")
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
+        post_response = self.client.post(url, {
+            "start":"2020-12-03T12:00+01:00",
+            "end":"2025-12-04T12:00+01:00",
+            "latitude":20.123456,
+            "longitude":-20.654321,
+            "description":"We need more tests here!",
+            "interests":[self.interest1.id],
+            "activities":[self.activity1.id]
+        })
+        self.assertEqual(post_response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_timeplace_end_has_to_be_after_start(self):
+        """Test if a user can create a timeplace with end before start.
+        """
+        url = reverse("timeplace-list")
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
+        post_response = self.client.post(url, {
+            "start":"2025-12-03T12:00+01:00",
+            "end":"2024-12-04T12:00+01:00",
+            "latitude":20.123456,
+            "longitude":-20.654321,
+            "description":"We need more tests here!",
+            "interests":[self.interest1.id],
+            "activities":[self.activity1.id]
+        })
+        self.assertEqual(post_response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_timeplace_invalid_latitude(self):
+        """Test if a user can create a timeplace with invalid latitude.
+        """
+        url = reverse("timeplace-list")
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
+        post_response = self.client.post(url, {
+            "start":"2020-12-03T12:00+01:00",
+            "end":"2025-12-04T12:00+01:00",
+            "latitude":120.123456,
+            "longitude":-20.654321,
+            "description":"We need more tests here!",
+            "interests":[self.interest1.id],
+            "activities":[self.activity1.id]
+        })
+        self.assertEqual(post_response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_timeplace_invalid_longitude(self):
+        """Test if a user can create a timeplace with invalid longitude.
+        """
+        url = reverse("timeplace-list")
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
+        post_response = self.client.post(url, {
+            "start":"2020-12-03T12:00+01:00",
+            "end":"2025-12-04T12:00+01:00",
+            "latitude":20.123456,
+            "longitude":220.654321,
+            "description":"We need more tests here!",
+            "interests":[self.interest1.id],
+            "activities":[self.activity1.id]
+        })
+        self.assertEqual(post_response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_user_can_modify_own_timeplace(self):
+        """Test if a user can modify his own timeplace.
+        """
+        url = reverse("timeplace-detail", args=(self.tp1.id,))
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
+        put_response = self.client.put(url, {
+            "start":"2025-12-01T12:00+01:00",
+            "end":"2025-12-01T16:00+01:00",
+            "latitude":20.123456,
+            "longitude":0.123456,
+            "description":"I want to run different tests!",
+            "interests":[self.interest1.id],
+            "activities":[self.activity1.id]
+        })
+        self.assertEqual(put_response.status_code, status.HTTP_200_OK)
+
+    def test_user_can_not_modify_timeplace_of_other_user(self):
+        """Test if a user can modify a timeplace of another user.
+        """
+        url = reverse("timeplace-detail", args=(self.tp1.id,))
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user2token.key)
+        put_response = self.client.put(url, {
+            "start":"2025-12-01T12:00+01:00",
+            "end":"2025-12-01T16:00+01:00",
+            "latitude":20.123456,
+            "longitude":0.123456,
+            "description":"I want to run different tests!",
+            "interests":[self.interest1.id],
+            "activities":[self.activity1.id]
+        })
+        self.assertEqual(put_response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_user_can_view_own_timeplace(self):
+        """Test if user can view details of his own timeplaces.
+        """
+        url = reverse("timeplace-detail", args=(self.tp1.id,))
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
+        get_response = self.client.get(url)
+        self.assertEqual(get_response.status_code, status.HTTP_200_OK)
+
+    def test_user_can_view_foreign_timeplace(self):
+        """Test if user can view details of foreign timeplaces.
+        """
+        url = reverse("timeplace-detail", args=(self.tp1.id,))
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user2token.key)
+        get_response = self.client.get(url)
+        self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_superuser_can_view_own_timeplace(self):
+        """Test if superuser can view timeplaces.
+        """
+        url = reverse("timeplace-detail", args=(self.tp1.id,))
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.supertoken.key)
+        get_response = self.client.get(url)
+        self.assertEqual(get_response.status_code, status.HTTP_200_OK)
+
+    def test_user_can_delete_own_timeplace(self):
+        """Test if user can delete his own timeplaces.
+        """
+        timeplace = models.TimePlace.objects.create(
+            user_id=self.user1,
+            start="2025-12-01T12:00+01:00",
+            end="2025-12-01T15:00+01:00",
+            latitude=20.123456,
+            longitude=0.123456,
+            description="I want to delete tests",
+        )
+        url = reverse("timeplace-detail", args=(timeplace.id,))
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
+        delete_response = self.client.delete(url)
+        self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_superuser_can_delete_timeplace(self):
+        """Test if a superuser can delete timeplaces.
+        """
+        timeplace = models.TimePlace.objects.create(
+            user_id=self.user1,
+            start="2025-12-01T12:00+01:00",
+            end="2025-12-01T15:00+01:00",
+            latitude=20.123456,
+            longitude=0.123456,
+            description="I want to delete tests",
+        )
+        url = reverse("timeplace-detail", args=(timeplace.id,))
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.supertoken.key)
+        delete_response = self.client.delete(url)
+        self.assertEqual(delete_response.status_code, status.HTTP_204_NO_CONTENT)
