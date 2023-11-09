@@ -3,9 +3,9 @@ import datetime
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from apps.user.models import User
+from apps.user.models import User, UserProfile
 from apps.user.models import Language, UserProfile, UserLanguage
-from apps.user.serializers import UserModelSerializer, LanguageModelSerializer, UserLanguageModelSerializer, UserProfileModelSerializer
+from apps.user.serializers import UserModelSerializer, LanguageModelSerializer, UserLanguageModelSerializer, UserProfileModelSerializer, UserProfileCreateSerializer, UserProfileUpdateSerializer
 
 
 class BaseUserModelTest(TestCase):
@@ -49,6 +49,7 @@ class UserModelSerializerTest(BaseUserModelTest):
 class UserModelDeserializerTest(BaseUserModelTest):
     """ Tests the deserialization of user data with a username an email-based username
     """
+
     def setUp(self):
         super().setUp()
         self.serializer = UserModelSerializer(data=self.user_data)
@@ -79,6 +80,7 @@ class UserModelDeserializerTest(BaseUserModelTest):
 class LanguageModelSerializerTest(TestCase):
     """ Test for valid and invalid language data.
     """
+
     def setUp(self):
         self.valid_language_data = {"lang": "اردو (Urdu)"}
         self.invalid_language_data = {"lang": ""}
@@ -98,7 +100,7 @@ class LanguageModelSerializerTest(TestCase):
 
 
 class UserProfileModelSerializerGetAgeTest(TestCase):
-    
+
     def test_get_age(self):
         """Test for the right age calculation in the get_age method.
         """
@@ -117,7 +119,7 @@ class UserProfileModelSerializerGetAgeTest(TestCase):
 
 
 class UserProfileModelSerializerTest(TestCase):
-    
+
     @classmethod
     def setUpTestData(cls):
 
@@ -162,3 +164,40 @@ class UserProfileModelSerializerTest(TestCase):
         self.assertEqual(serialized_data['gender'], 'M')
         self.assertEqual(serialized_data['phone'], '1234567890')
         self.assertEqual(serialized_data['profile_email'], 'test@example.com')
+
+
+class UserProfileSerializerTest(TestCase):
+    def test_valid_serializer_data_create(self):
+        # Valid data that can be used for serialization
+
+        valid_data = {
+
+            "user": 42,
+            "name": "Alice",
+            "hometown": "Paris",
+            "slogan": "Carpe diem",
+            "birthday": "1990-01-01",
+            "gender": "F",
+            "phone": "+33291020404",
+            "profile_email": "alice@email.com",
+            "languages": [1, 2],
+        }
+
+        serializer = UserProfileCreateSerializer(data=valid_data)
+        self.assertTrue(serializer.is_valid())
+
+    def test_invalid_serializer_data_update(self):
+        valid_data = {
+
+            "user": 42,
+            "name": "Alice",
+            "hometown": "Berlin",
+            "slogan": "Memento mori",
+            "gender": "F",
+            "phone": "+33291020888",
+            "profile_email": "alice.new@email.com",
+            "languages": [1, 2, 3, 4],
+        }
+
+        serializer = UserProfileUpdateSerializer(data=valid_data)
+        self.assertFalse(serializer.is_valid())

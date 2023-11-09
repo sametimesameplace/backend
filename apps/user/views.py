@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
 from .models import User, UserProfile
-from .serializers import UserModelSerializer, UserProfileCreateSerializer, UserProfileUpdateSerializer, UserProfileRetrieveSerializer
+from .serializers import UserModelSerializer, UserProfileModelSerializer, UserProfileUpdateSerializer, 
 from .permissions import UserSuperDeleteOnly
 from apps.timeplace.permissions import IsAuthenticatedCreateOrSuperOrAuthor
 
@@ -50,7 +50,16 @@ class ListUsers(viewsets.ModelViewSet):
 
 class DisplayUserProfile(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
-    serializer_class = UserProfileRetrieveSerializer
+    serializer_class = UserProfileModelSerializer
     permission_classes = [
         IsAuthenticatedCreateOrSuperOrAuthor,
     ]
+
+
+class UserProfileUpdateView(viewsets.ModelViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileUpdateSerializer
+    permission_classes = [IsAuthenticatedCreateOrSuperOrAuthor]
+
+    # def get_object(self):
+    #     return self.request.user.userprofile

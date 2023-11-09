@@ -1,4 +1,5 @@
-from django.utils import timezone
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 
 from rest_framework import serializers
 
@@ -34,18 +35,21 @@ class UserModelSerializer(serializers.ModelSerializer):
             "title"
         )
 
+
 class LanguageModelSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = models.Language
         fields = ('id', 'lang')
 
+
 class UserLanguageModelSerializer(serializers.ModelSerializer):
     # language = LanguageModelSerializer()
-    
+
     class Meta:
         model = models.UserLanguage
         fields = ('id', 'userprofile', 'language', 'level')
+
 
 class UserProfileModelSerializer(serializers.ModelSerializer):
     user = UserModelSerializer()
@@ -62,9 +66,10 @@ class UserProfileModelSerializer(serializers.ModelSerializer):
     def get_age(self, obj):
         today = date.today()
         birthdate = obj.birthday
-        age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
+        age = today.year - birthdate.year - \
+            ((today.month, today.day) < (birthdate.month, birthdate.day))
         return age
-    
+
 
 class UserProfileCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -82,9 +87,8 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
         def validate_phone(self, phone):
             pass
 
-        def validate_birthday(self, birthday):
+        def validate_age18plus(self, birthday):
             pass
-       
 
 
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
@@ -95,22 +99,6 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
             "name",
             "hometown",
             "slogan",
-            "gender",
-            "phone",
-            "profile_email",
-        )
-
-
-class UserProfileRetrieveSerializer(serializers.ModelSerializer):
-    # Returns age instead of birthday
-    class Meta:
-        model = models.UserProfile
-        fields = (
-            "user",
-            "name",
-            "hometown",
-            "slogan",
-            "age",
             "gender",
             "phone",
             "profile_email",

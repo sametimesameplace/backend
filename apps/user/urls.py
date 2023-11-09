@@ -5,6 +5,7 @@ from apps.user import views
 
 router = routers.SimpleRouter()
 router.register("api/v1/user", views.ListUsers)
+router.register("api/v1/userprofile", views.UserProfileModelSerializer)
 
 
 urlpatterns = [
