@@ -19,7 +19,7 @@ class BaseUserModelTest(TestCase):
         }
 
     def _perform_user_test(self, serializer_data, expected_data):
-        """  helper method that takes serializer_data (data to be serialized), and expected_data (expected values) as parameters """
+        """helper method that takes serializer_data (data to be serialized), and expected_data (expected values) as parameters"""
 
         serializer = UserModelSerializer(data=serializer_data)
         self.assertTrue(serializer.is_valid())
@@ -47,8 +47,8 @@ class UserModelSerializerTest(BaseUserModelTest):
 
 
 class UserModelDeserializerTest(BaseUserModelTest):
-    """ Tests the deserialization of user data with a username an email-based username"""
-
+    """ Tests the deserialization of user data with a username an email-based username
+    """
     def setUp(self):
         super().setUp()
         self.serializer = UserModelSerializer(data=self.user_data)
@@ -56,7 +56,8 @@ class UserModelDeserializerTest(BaseUserModelTest):
         self.user_instance = self.serializer.save()
 
     def test_user_deserialization(self):
-        """ test the deserialization with unique user data """
+        """ test the deserialization with unique user data
+        """
         unique_user_data = {
             "username": "testuser_unique",
             "password": "testpassword",
@@ -65,7 +66,8 @@ class UserModelDeserializerTest(BaseUserModelTest):
         self._perform_user_test(unique_user_data, unique_user_data)
 
     def test_user_deserialization_with_email_as_username(self):
-        """ test the deserialization with email-based username data """
+        """ test the deserialization with email-based username data
+        """
         email_as_username_data = {
             "username": "test@example.com",
             "password": "testpassword",
@@ -75,8 +77,8 @@ class UserModelDeserializerTest(BaseUserModelTest):
 
 
 class LanguageModelSerializerTest(TestCase):
-    """ Test for valid and invalid language data. """
-
+    """ Test for valid and invalid language data.
+    """
     def setUp(self):
         self.valid_language_data = {"lang": "اردو (Urdu)"}
         self.invalid_language_data = {"lang": ""}
@@ -96,10 +98,10 @@ class LanguageModelSerializerTest(TestCase):
 
 
 class UserProfileModelSerializerGetAgeTest(TestCase):
-    """Test for the right age calculation in the get_age method.  """
-
+    
     def test_get_age(self):
-
+        """Test for the right age calculation in the get_age method.
+        """
         birthdate = datetime.date(1990, 1, 1)
         user_profile = UserProfile(birthday=birthdate)
 
@@ -115,7 +117,7 @@ class UserProfileModelSerializerGetAgeTest(TestCase):
 
 
 class UserProfileModelSerializerTest(TestCase):
-    """ test that the serialization of a user profile using the specified serializer produces the expected output """
+    
     @classmethod
     def setUpTestData(cls):
 
@@ -148,11 +150,11 @@ class UserProfileModelSerializerTest(TestCase):
         )
 
     def test_serialization(self):
-        # Serialisierung des User-Profils
+        """ test that the serialization of a user profile produces the expected output
+        """
         serializer = UserProfileModelSerializer(instance=self.user_profile)
         serialized_data = serializer.data
 
-        # Tests ob Serialisierung klappt
         self.assertEqual(serialized_data['name'], 'Test Name')
         self.assertEqual(serialized_data['hometown'], 'Test Hometown')
         self.assertEqual(serialized_data['slogan'], 'Test Slogan')
