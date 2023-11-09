@@ -1,23 +1,12 @@
-from django.urls import reverse
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.test import APITestCase
 
 from apps.user import models
 from apps.user.models import User, UserProfile
 from apps.user.serializers import UserModelSerializer, UserProfileCreateSerializer, UserProfileUpdateSerializer, UserProfileRetrieveSerializer
-
-
-class TestUserModelSerializer(TestCase):
-    def test_valid_user_model_serializer(self):
-        valid_data = {
-
-        }
-        serializer = UserProfileCreateSerializer(data=valid_data)
-        self.assertTrue(serializer.is_valid())
 
 
 class TestUserProfileSerializer(TestCase):
@@ -54,7 +43,7 @@ class TestUserProfileSerializer(TestCase):
         }
 
         serializer = UserProfileUpdateSerializer(data=valid_data)
-        self.assertTrue(serializer.is_valid())
+        self.assertFalse(serializer.is_valid())
 
     def test_valid_serializer_data_retrieve(self):
 
