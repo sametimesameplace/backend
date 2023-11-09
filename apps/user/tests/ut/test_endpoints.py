@@ -39,6 +39,8 @@ class TestUserEndpoints(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_list_unauthorized(self):
+        """Tests that a user is unauthorized to get a list of users"""
+
         url = reverse("user-detail", args=(self.user.id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -56,6 +58,34 @@ class TestUserEndpoints(APITestCase):
             },
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_user_no_username_given(self):
+        """Tests that a user cannot be created without a username"""
+
+        url = reverse("user-list")
+        response = self.client.post(
+            url,
+            data={
+                "username": "",
+                "password": "fred_2023",
+                "email": "fred@stsp.com",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_user_no_password_given(self):
+        """Tests that a user cannot be created without a password"""
+
+        url = reverse("user-list")
+        response = self.client.post(
+            url,
+            data={
+                "username": "frank",
+                "password": "",
+                "email": "frank@stsp.com",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_delete_user(self):
         """Tests that a user can only be deleted by the superuser"""
