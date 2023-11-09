@@ -38,6 +38,11 @@ class TestUserEndpoints(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.supertoken.key)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_user_list_unauthorized(self):
+        url = reverse("user-detail", args=(self.user.id,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_create_user(self):
         """Tests that a user can be created"""
 
