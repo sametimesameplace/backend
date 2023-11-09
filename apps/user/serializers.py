@@ -23,6 +23,9 @@ class UserModelSerializer(serializers.ModelSerializer):
     def validate_email(self, value):
         pass
 
+    def validate_email(self, value):
+        pass
+
     class Meta:
         model = models.User
         fields = (
@@ -99,6 +102,57 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
             "name",
             "hometown",
             "slogan",
+            "gender",
+            "phone",
+            "profile_email",
+        )
+
+
+class UserProfileCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.UserProfile
+        fields = (
+            "name",
+            "hometown",
+            "slogan",
+            "birthday",
+            "gender",
+            "phone",
+            "profile_email",
+        )
+
+        def validate_phone(self, phone):
+            pass
+
+        def validate_birthday(self, birthday):
+            pass
+       
+
+
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    # Birthday cannot be updated
+    class Meta:
+        model = models.UserProfile
+        fields = (
+            "name",
+            "hometown",
+            "slogan",
+            "gender",
+            "phone",
+            "profile_email",
+        )
+
+
+class UserProfileRetrieveSerializer(serializers.ModelSerializer):
+    # Returns age instead of birthday
+    class Meta:
+        model = models.UserProfile
+        fields = (
+            "user",
+            "name",
+            "hometown",
+            "slogan",
+            "age",
             "gender",
             "phone",
             "profile_email",
