@@ -115,7 +115,7 @@ class UserProfileModelSerializerGetAgeTest(TestCase):
 
 
 class UserProfileModelSerializerTest(TestCase):
-
+    """ test that the serialization of a user profile using the specified serializer produces the expected output """
     @classmethod
     def setUpTestData(cls):
 
