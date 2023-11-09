@@ -8,6 +8,13 @@ class User(AbstractUser):
     bio = models.TextField(default='', blank=True)
 
 
+class Language(models.Model):
+    lang = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.lang
+
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
@@ -25,15 +32,8 @@ class UserProfile(models.Model):
     languages = models.ManyToManyField("user.Language", through="UserLanguage")
 
 
-class Language(models.Model):
-    lang = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.lang
-
-
 class UserLanguage(models.Model):
-    userprofile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    userprofile = models.ForeignKey(UserProfile, related_name="user_language", on_delete=models.CASCADE)
     language = models.ForeignKey(Language, on_delete=models.CASCADE)
     level_choices = [
         ('Learning', 'Learning'),
