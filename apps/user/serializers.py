@@ -6,8 +6,6 @@ from datetime import date
 
 from . import models
 
-from .models import UserProfile
-
 
 class UserModelSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -20,9 +18,6 @@ class UserModelSerializer(serializers.ModelSerializer):
         )
 
         return user
-
-    def validate_phone(self, value):
-        pass
 
     def validate_email(self, value):
         pass
@@ -73,9 +68,8 @@ class UserProfileModelSerializer(serializers.ModelSerializer):
 
 class UserProfileCreateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserProfile
+        model = models.UserProfile
         fields = (
-            "user",
             "name",
             "hometown",
             "slogan",
@@ -83,36 +77,34 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
             "gender",
             "phone",
             "profile_email",
-            "languages"
         )
 
-        # def validate_birthday(self, birthday):
-        #     # Check if the birthday is in past (or age < 18)
-        #     if birthday > timezone.now().date():
-        #         raise serializers.ValidationError("Invalid birthday")
-        #     return birthday
+        def validate_phone(self, phone):
+            pass
+
+        def validate_birthday(self, birthday):
+            pass
+       
 
 
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
     # Birthday cannot be updated
     class Meta:
-        model = UserProfile
+        model = models.UserProfile
         fields = (
-            "user",
             "name",
             "hometown",
             "slogan",
             "gender",
             "phone",
             "profile_email",
-            "languages"
         )
 
 
 class UserProfileRetrieveSerializer(serializers.ModelSerializer):
     # Returns age instead of birthday
     class Meta:
-        model = UserProfile
+        model = models.UserProfile
         fields = (
             "user",
             "name",
@@ -122,5 +114,4 @@ class UserProfileRetrieveSerializer(serializers.ModelSerializer):
             "gender",
             "phone",
             "profile_email",
-            "languages"
         )
