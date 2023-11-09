@@ -115,18 +115,20 @@ class UserProfileModelSerializerGetAgeTest(TestCase):
 
 
 class UserProfileModelSerializerTest(TestCase):
-    def setUp(self):
-        
-        self.user = get_user_model().objects.create_user(
+
+    @classmethod
+    def setUpTestData(cls):
+
+        cls.user = get_user_model().objects.create_user(
             username='testuser',
             password='testpassword',
             email='test@example.com'
         )
 
-        self.language = Language.objects.create(lang='English')
+        cls.language = Language.objects.create(lang='English')
 
-        self.user_profile = UserProfile.objects.create(
-            user=self.user,
+        cls.user_profile = UserProfile.objects.create(
+            user=cls.user,
             name='Test Name',
             hometown='Test Hometown',
             slogan='Test Slogan',
@@ -134,11 +136,14 @@ class UserProfileModelSerializerTest(TestCase):
             gender='M',
             phone='1234567890',
             profile_email='test@example.com',
-            
+
         )
-        self.user_language = UserLanguage.objects.create(
-            userprofile=self.user_profile,
-            language=self.language,
+        # birthday needs to be processed to be a date object, not a string
+        cls.user_profile = UserProfile.objects.get(pk=cls.user_profile.id)
+
+        cls.user_language = UserLanguage.objects.create(
+            userprofile=cls.user_profile,
+            language=cls.language,
             level='Fluent'
         )
 

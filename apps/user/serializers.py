@@ -44,7 +44,7 @@ class UserLanguageModelSerializer(serializers.ModelSerializer):
 
 class UserProfileModelSerializer(serializers.ModelSerializer):
     user = UserModelSerializer()
-    languages = UserLanguageModelSerializer(many=True)
+    languages = UserLanguageModelSerializer(many=True, source='user_language')
     age = serializers.SerializerMethodField()
 
     class Meta:
