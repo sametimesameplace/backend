@@ -45,7 +45,9 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
         """Use the CreateUpdateSerializer for create and update
         so interests and activities can be provided with lists of ids
         """
-        if self.action in ("create", "update"):
+        if self.request.user.is_superuser:
+            return serializers.TimePlaceModelAdminSerializer
+        elif self.action in ("create", "update"):
             return serializers.TimePlaceModelCreateUpdateSerializer
         return serializers.TimePlaceModelViewSerializer
 
