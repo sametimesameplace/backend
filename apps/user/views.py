@@ -7,10 +7,6 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
 
 from .models import User, UserProfile
 from .serializers import UserModelSerializer, UserProfileModelSerializer, UserProfileUpdateSerializer, UserProfileCreateSerializer
@@ -26,8 +22,6 @@ class UserLoginView(APIView):
 
         # authenticate the user
         user: Optional[User] = authenticate(
-            username=username,
-            password=password,
             username=username,
             password=password,
         )

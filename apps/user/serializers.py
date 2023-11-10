@@ -1,6 +1,3 @@
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
-
 from rest_framework import serializers
 
 from datetime import date
@@ -19,12 +16,6 @@ class UserModelSerializer(serializers.ModelSerializer):
         )
 
         return user
-
-    def validate_email(self, value):
-        pass
-
-    def validate_email(self, value):
-        pass
 
     class Meta:
         model = models.User
