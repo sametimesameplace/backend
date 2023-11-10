@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
 from .models import User, UserProfile
-from .serializers import UserModelSerializer, UserProfileModelSerializer, UserProfileUpdateSerializer, 
+from .serializers import UserModelSerializer, UserProfileModelSerializer, UserProfileUpdateSerializer, UserProfileCreateSerializer
 from .permissions import UserSuperDeleteOnly
 from apps.timeplace.permissions import IsAuthenticatedCreateOrSuperOrAuthor
 
@@ -54,18 +54,28 @@ class ListUsers(viewsets.ModelViewSet):
     ]
 
 
-class DisplayUserProfile(viewsets.ModelViewSet):
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileModelSerializer
-    permission_classes = [
+class UserProfileModelViewSet(viewsets.ModelViewSet):
+    # queryset = UserProfile.objects.all()
+    permission_classes = (
         IsAuthenticatedCreateOrSuperOrAuthor,
-    ]
+    )
 
+    def get_serializer_class(self):
+        if self.action == "create":
+            return UserProfileCreateSerializer
+        elif self.action == "update":
+            return UserProfileUpdateSerializer
+        return UserProfileModelSerializer
 
-class UserProfileUpdateView(viewsets.ModelViewSet):
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileUpdateSerializer
-    permission_classes = [IsAuthenticatedCreateOrSuperOrAuthor]
+    def perform_create(self, serializer):
+        """The logged in user is always the author
+        """
+        return serializer.save(user_id=self.request.user)
 
-    # def get_object(self):
-    #     return self.request.user.userprofile
+    def get_queryset(self):
+        """Limit the queryset to the author, 
+        i.e the logged in user, for fetching/updating data
+        """
+        if self.request.user.is_superuser:
+            return self.queryset
+        return self.queryset.filter(user_id=self.request.user)
