@@ -3,9 +3,9 @@ import datetime
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from apps.user.models import User
+from apps.user.models import User, UserProfile
 from apps.user.models import Language, UserProfile, UserLanguage
-from apps.user.serializers import UserModelSerializer, LanguageModelSerializer, UserLanguageModelSerializer, UserProfileModelSerializer
+from apps.user.serializers import UserModelSerializer, LanguageModelSerializer, UserLanguageModelSerializer, UserProfileModelSerializer, UserProfileCreateSerializer, UserProfileUpdateSerializer
 
 
 class BaseUserModelTest(TestCase):
@@ -74,6 +74,7 @@ class UserModelDeserializerTest(BaseUserModelTest):
 class LanguageModelSerializerTest(TestCase):
     """ Test for valid and invalid language data.
     """
+
     def setUp(self):
         self.valid_language_data = {"lang": "اردو (Urdu)"}
         self.invalid_language_data = {"lang": ""}
@@ -93,7 +94,7 @@ class LanguageModelSerializerTest(TestCase):
 
 
 class UserProfileModelSerializerGetAgeTest(TestCase):
-    
+
     def test_get_age(self):
         """Test for the right age calculation in the get_age method.
         """
@@ -112,7 +113,7 @@ class UserProfileModelSerializerGetAgeTest(TestCase):
 
 
 class UserProfileModelSerializerTest(TestCase):
-    
+
     @classmethod
     def setUpTestData(cls):
 

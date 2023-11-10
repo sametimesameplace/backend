@@ -29,18 +29,21 @@ class UserModelSerializer(serializers.ModelSerializer):
             "title"
         )
 
+
 class LanguageModelSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = models.Language
         fields = ('id', 'lang')
 
+
 class UserLanguageModelSerializer(serializers.ModelSerializer):
     # language = LanguageModelSerializer()
-    
+
     class Meta:
         model = models.UserLanguage
         fields = ('id', 'userprofile', 'language', 'level')
+
 
 class UserProfileModelSerializer(serializers.ModelSerializer):
     user = UserModelSerializer()
@@ -57,6 +60,40 @@ class UserProfileModelSerializer(serializers.ModelSerializer):
     def get_age(self, obj):
         today = date.today()
         birthdate = obj.birthday
-        age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
+        age = today.year - birthdate.year - \
+            ((today.month, today.day) < (birthdate.month, birthdate.day))
         return age
-    
+
+
+class UserProfileCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.UserProfile
+        fields = (
+            "name",
+            "hometown",
+            "slogan",
+            "birthday",
+            "gender",
+            "phone",
+            "profile_email",
+        )
+
+        def validate_phone(self, phone):
+            pass
+
+        def validate_age18plus(self, birthday):
+            pass
+
+
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    # Birthday cannot be updated
+    class Meta:
+        model = models.UserProfile
+        fields = (
+            "name",
+            "hometown",
+            "slogan",
+            "gender",
+            "phone",
+            "profile_email",
+        )
