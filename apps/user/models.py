@@ -3,10 +3,11 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    email = models.EmailField(_("email address"), unique=True)
-    title = models.CharField(max_length=100, null=True,
-                             blank=True, help_text="Your profession")
-    bio = models.TextField(default='', blank=True)
+    email = models.EmailField(("email address"), unique=True)
+    title = models.CharField(
+        max_length=100, null=True, blank=True, help_text="Your profession"
+    )
+    bio = models.TextField(default="", blank=True)
 
 
 class Language(models.Model):
@@ -23,9 +24,9 @@ class UserProfile(models.Model):
     slogan = models.CharField(max_length=255)
     birthday = models.DateField()
     GENDER_CHOICES = [
-        ('M', 'Male'),
-        ('F', 'Female'),
-        ('D', 'Diverse'),
+        ("M", "Male"),
+        ("F", "Female"),
+        ("D", "Diverse"),
     ]
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     phone = models.CharField(max_length=20)
@@ -34,19 +35,22 @@ class UserProfile(models.Model):
 
 
 class UserLanguage(models.Model):
-    userprofile = models.ForeignKey(UserProfile, related_name="user_language", on_delete=models.CASCADE)
+    userprofile = models.ForeignKey(
+        UserProfile, related_name="user_language", on_delete=models.CASCADE
+    )
     language = models.ForeignKey(Language, on_delete=models.CASCADE)
     level_choices = [
-        ('Learning', 'Learning'),
-        ('Fluent', 'Fluent'),
-        ('Preferred', 'Preferred'),
+        ("Learning", "Learning"),
+        ("Fluent", "Fluent"),
+        ("Preferred", "Preferred"),
     ]
     level = models.CharField(max_length=20, choices=level_choices)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['userprofile', 'language'], name='unique language')
+                fields=["userprofile", "language"], name="unique language"
+            )
         ]
 
     def __str__(self):
