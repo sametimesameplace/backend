@@ -4,8 +4,9 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     email = models.EmailField(("email address"), unique=True)
-    title = models.CharField(max_length=100, null=True,
-                             blank=True, help_text="Your profession")
+    title = models.CharField(
+        max_length=100, null=True, blank=True, help_text="Your profession"
+    )
     bio = models.TextField(default='', blank=True)
 
 
