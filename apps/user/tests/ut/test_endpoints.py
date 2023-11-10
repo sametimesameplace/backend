@@ -30,6 +30,14 @@ class TestUserEndpoints(APITestCase):
         )
         cls.usertoken = Token.objects.create(user=cls.user)
 
+        cls.user2 = User.objects.create_user(
+            username="test_user2",
+            email="test_user2@stsp.com",
+            password="test_user2_2023",
+        )
+
+        cls.usertoken2 = Token.objects.create(user=cls.user2)
+
     def test_user_list_authorized(self):
         """Tests that a list of users are returned for admin only"""
 
@@ -97,6 +105,52 @@ class TestUserEndpoints(APITestCase):
                 "username": "edith",
                 "password": "edith_2023",
                 "email": "",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_two_users_cannot_have_same_email(self):
+        """Tests that two users cannot have the same email"""
+        url = reverse("user-list")
+        response = self.client.post(
+            url,
+            data={
+                "username": "user1",
+                "password": "user1_2023",
+                "email": "user1@stsp.com",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(
+            url,
+            data={
+                "username": "user2",
+                "password": "user2_2023",
+                "email": "user1@stsp.com",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_two_users_cannot_have_same_username(self):
+        """Tests that two users cannot have the same username"""
+        url = reverse("user-list")
+        response = self.client.post(
+            url,
+            data={
+                "username": "user3",
+                "password": "user3_2023",
+                "email": "user3@stsp.com",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(
+            url,
+            data={
+                "username": "user3",
+                "password": "user4_2023",
+                "email": "user4@stsp.com",
             },
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
