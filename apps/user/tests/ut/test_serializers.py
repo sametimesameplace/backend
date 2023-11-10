@@ -50,12 +50,6 @@ class UserModelDeserializerTest(BaseUserModelTest):
     """ Tests the deserialization of user data with a username an email-based username
     """
 
-    def setUp(self):
-        super().setUp()
-        self.serializer = UserModelSerializer(data=self.user_data)
-        self.assertTrue(self.serializer.is_valid())
-        self.user_instance = self.serializer.save()
-
     def test_user_deserialization(self):
         """ test the deserialization with unique user data
         """
