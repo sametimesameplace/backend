@@ -38,7 +38,7 @@ class LanguageModelSerializer(serializers.ModelSerializer):
 
 
 class UserLanguageModelSerializer(serializers.ModelSerializer):
-    # language = LanguageModelSerializer()
+    language = serializers.StringRelatedField()
 
     class Meta:
         model = models.UserLanguage
