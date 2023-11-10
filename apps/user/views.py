@@ -49,7 +49,7 @@ class ListUsers(viewsets.ModelViewSet):
 
 
 class UserProfileModelViewSet(viewsets.ModelViewSet):
-    # queryset = UserProfile.objects.all()
+    queryset = UserProfile.objects.all()
     permission_classes = (
         IsAuthenticatedCreateOrSuperOrAuthor,
     )
