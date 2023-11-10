@@ -49,11 +49,6 @@ class UserModelSerializerTest(BaseUserModelTest):
 class UserModelDeserializerTest(BaseUserModelTest):
     """ Tests the deserialization of user data with a username an email-based username
     """
-    def setUp(self):
-        super().setUp()
-        self.serializer = UserModelSerializer(data=self.user_data)
-        self.assertTrue(self.serializer.is_valid())
-        self.user_instance = self.serializer.save()
 
     def test_user_deserialization(self):
         """ test the deserialization with unique user data
@@ -61,7 +56,7 @@ class UserModelDeserializerTest(BaseUserModelTest):
         unique_user_data = {
             "username": "testuser_unique",
             "password": "testpassword",
-            "email": "test@example.com",
+            "email": "test1@example.com",
         }
         self._perform_user_test(unique_user_data, unique_user_data)
 
@@ -69,9 +64,9 @@ class UserModelDeserializerTest(BaseUserModelTest):
         """ test the deserialization with email-based username data
         """
         email_as_username_data = {
-            "username": "test@example.com",
+            "username": "test2@example.com",
             "password": "testpassword",
-            "email": "test@example.com",
+            "email": "test2@example.com",
         }
         self._perform_user_test(email_as_username_data, email_as_username_data)
 
