@@ -76,3 +76,29 @@ class TimePlaceModelViewSerializer(serializers.ModelSerializer):
             "interests",
             "activities"
         ]
+
+
+class TimePlaceModelAdminSerializer(serializers.ModelSerializer):
+    """Serializer for the TimePlace model that includes detailed
+    information about the user, interests and activities, including the
+    deletion state
+    """
+    user_id = UserModelSerializer()
+    interests = InterestModelSerializer(many=True)
+    activities = ActivityModelSerializer(many=True)
+
+    class Meta:
+        model = models.TimePlace
+        fields = [
+            "id",
+            "user_id",
+            "start",
+            "end",
+            "latitude",
+            "longitude",
+            "description",
+            "interests",
+            "activities",
+            "deleted",
+            "deleted_on"
+        ]
