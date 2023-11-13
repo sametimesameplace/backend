@@ -41,3 +41,6 @@ backup:
 v = 1
 dev-test:
 	python manage.py test $(module) -v $(v) --settings=config.settings.dev
+
+dev-schema:
+	python manage.py spectacular --color --file OpenAPI_schema.yml --settings=config.settings.dev
