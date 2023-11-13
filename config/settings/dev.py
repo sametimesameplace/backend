@@ -26,3 +26,18 @@ DATABASES = {
         "PASSWORD": env.str("DB_PASSWORD"),
     }
 }
+
+# Register drf_spectacular to create the OpenAPI schema
+INSTALLED_APPS = [
+    *INSTALLED_APPS,
+    'drf_spectacular',
+]
+
+REST_FRAMEWORK['DEFAULT_SCHEMA_CLASS'] = 'drf_spectacular.openapi.AutoSchema'
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'SameTimeSamePlace API',
+    'DESCRIPTION': 'Find friends for an adventure.',
+    'VERSION': '0.1.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
