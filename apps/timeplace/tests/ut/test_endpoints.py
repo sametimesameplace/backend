@@ -225,6 +225,7 @@ class TestTimePlaceEndpoints(APITestCase):
             end="2025-12-01T15:00+01:00",
             latitude=20.123456,
             longitude=0.123456,
+            radius=10,
             description="I want to run tests",
         )
         cls.tp1.interests.add(cls.interest1.id, cls.interest2.id)
@@ -236,6 +237,7 @@ class TestTimePlaceEndpoints(APITestCase):
             end="2025-12-02T15:00+01:00",
             latitude=20.123456,
             longitude=0.123456,
+            radius=10,
             description="I want to run more tests",
         )
         cls.tp2.interests.add(cls.interest1.id)
@@ -247,6 +249,7 @@ class TestTimePlaceEndpoints(APITestCase):
             end="2025-12-02T15:00+01:00",
             latitude=20.123456,
             longitude=0.123456,
+            radius=10,
             description="I want to run tests with different users",
         )
         cls.tp3.interests.add(cls.interest1.id)
@@ -297,6 +300,7 @@ class TestTimePlaceEndpoints(APITestCase):
             "end":"2025-12-04T12:00+01:00",
             "latitude":20.123456,
             "longitude":-20.654321,
+            "radius":10,
             "description":"We need more tests here!",
             "interests":[self.interest1.id],
             "activities":[self.activity1.id]
@@ -313,6 +317,7 @@ class TestTimePlaceEndpoints(APITestCase):
             "end":"2025-12-04T12:00+01:00",
             "latitude":20.123456,
             "longitude":-20.654321,
+            "radius":10,
             "description":"We need more tests here!",
             "interests":[self.interest1.id],
             "activities":[self.activity1.id]
@@ -329,6 +334,7 @@ class TestTimePlaceEndpoints(APITestCase):
             "end":"2024-12-04T12:00+01:00",
             "latitude":20.123456,
             "longitude":-20.654321,
+            "radius":10,
             "description":"We need more tests here!",
             "interests":[self.interest1.id],
             "activities":[self.activity1.id]
@@ -345,6 +351,7 @@ class TestTimePlaceEndpoints(APITestCase):
             "end":"2025-12-04T12:00+01:00",
             "latitude":120.123456,
             "longitude":-20.654321,
+            "radius":10,
             "description":"We need more tests here!",
             "interests":[self.interest1.id],
             "activities":[self.activity1.id]
@@ -361,6 +368,7 @@ class TestTimePlaceEndpoints(APITestCase):
             "end":"2025-12-04T12:00+01:00",
             "latitude":20.123456,
             "longitude":220.654321,
+            "radius":10,
             "description":"We need more tests here!",
             "interests":[self.interest1.id],
             "activities":[self.activity1.id]
@@ -377,6 +385,7 @@ class TestTimePlaceEndpoints(APITestCase):
             "end":"2025-12-01T16:00+01:00",
             "latitude":20.123456,
             "longitude":0.123456,
+            "radius":10,
             "description":"I want to run different tests!",
             "interests":[self.interest1.id],
             "activities":[self.activity1.id]
@@ -393,6 +402,7 @@ class TestTimePlaceEndpoints(APITestCase):
             "end":"2025-12-01T16:00+01:00",
             "latitude":20.123456,
             "longitude":0.123456,
+            "radius":10,
             "description":"I want to run different tests!",
             "interests":[self.interest1.id],
             "activities":[self.activity1.id]
@@ -432,6 +442,7 @@ class TestTimePlaceEndpoints(APITestCase):
             end="2025-12-01T15:00+01:00",
             latitude=20.123456,
             longitude=0.123456,
+            radius=10,
             description="I want to delete tests",
         )
         url = reverse("timeplace-detail", args=(timeplace.id,))
@@ -448,6 +459,7 @@ class TestTimePlaceEndpoints(APITestCase):
             end="2025-12-01T15:00+01:00",
             latitude=20.123456,
             longitude=0.123456,
+            radius=10,
             description="I want to delete tests",
         )
         url = reverse("timeplace-detail", args=(timeplace.id,))

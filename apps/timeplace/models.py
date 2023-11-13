@@ -34,6 +34,7 @@ class TimePlace(CreatedModifiedDateTimeBase, SoftDelete):
     end = models.DateTimeField()
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    radius = models.PositiveSmallIntegerField()
     description = models.CharField(max_length=500)
     interests = models.ManyToManyField("timeplace.Interest")
     activities = models.ManyToManyField("timeplace.Activity")

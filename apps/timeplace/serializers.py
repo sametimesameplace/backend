@@ -30,6 +30,7 @@ class TimePlaceModelCreateUpdateSerializer(serializers.ModelSerializer):
             "end",
             "latitude",
             "longitude",
+            "radius",
             "description",
             "interests",
             "activities"
@@ -48,10 +49,13 @@ class TimePlaceModelCreateUpdateSerializer(serializers.ModelSerializer):
                 "End date has to be after start date.")
         if attrs["latitude"] > 90 or attrs["latitude"] < -90:
             raise serializers.ValidationError(
-                "Latitude has to be between +90° and -90°")
+                "Latitude has to be between +90° and -90°.")
         if attrs["longitude"] > 180 or attrs["longitude"] < -180:
             raise serializers.ValidationError(
-                "Longitude has to be between +180° and -180°")
+                "Longitude has to be between +180° and -180°.")
+        if attrs["radius"] > 50:
+            raise serializers.ValidationError(
+                "Radius can be 50km at most.")
         return attrs
 
 
@@ -72,6 +76,7 @@ class TimePlaceModelViewSerializer(serializers.ModelSerializer):
             "end",
             "latitude",
             "longitude",
+            "radius",
             "description",
             "interests",
             "activities"
@@ -96,9 +101,11 @@ class TimePlaceModelAdminSerializer(serializers.ModelSerializer):
             "end",
             "latitude",
             "longitude",
+            "radius",
             "description",
             "interests",
             "activities",
             "deleted",
             "deleted_on"
         ]
+
