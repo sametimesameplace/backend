@@ -57,7 +57,7 @@ class UserProfileModelSerializer(serializers.ModelSerializer):
             'gender', 'phone', 'profile_email', 'languages', 'age'
         )
 
-    def get_age(self, obj):
+    def get_age(self, obj) -> int:
         today = date.today()
         birthdate = obj.birthday
         age = today.year - birthdate.year - \
@@ -97,3 +97,15 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
             "phone",
             "profile_email",
         )
+
+class UserLoginSerializer(serializers.Serializer):
+    """ ensures that both the username and password fields are present in the input data"""
+    
+    username = serializers.CharField(max_length=255)
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        username, password = data.get('username'), data.get('password')
+        if not (username and password):
+            raise serializers.ValidationError("Username and password are required.")
+        return data

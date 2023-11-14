@@ -7,21 +7,30 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny
 
 from .models import User, UserProfile
-from .serializers import UserModelSerializer, UserProfileModelSerializer, UserProfileUpdateSerializer, UserProfileCreateSerializer
+from .serializers import UserModelSerializer, UserProfileModelSerializer, UserProfileUpdateSerializer, UserProfileCreateSerializer, UserLoginSerializer
 from .permissions import UserSuperDeleteOnly
 from apps.timeplace.permissions import IsAuthenticatedCreateOrSuperOrAuthor
 
 
-class UserLoginView(APIView):
-    def post(self, request):
-        # get credentials
-        password = request.data.get('password')
-        username = request.data.get('username')
+class UserLoginView(viewsets.ModelViewSet):
+    """handle user login functionality, the associated model for this view represents user data from the authentication fields"""
+        
+    serializer_class = UserLoginSerializer
+    permission_classes = [AllowAny]
 
-        # authenticate the user
-        user: Optional[User] = authenticate(
+    def create(self, request, *args, **kwargs):
+        """validating the incoming data, authenticating the user based on the provided credentials, and generating a token for the authenticated user. """
+        
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        username = serializer.validated_data['username']
+        password = serializer.validated_data['password']
+
+        user = authenticate(
             username=username,
             password=password,
         )
@@ -31,13 +40,13 @@ class UserLoginView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        # Create the token
         token, _ = Token.objects.get_or_create(user=user)
 
         return Response(
             {"token": token.key},
             status=status.HTTP_200_OK
         )
+
 
 
 class ListUsers(viewsets.ModelViewSet):
