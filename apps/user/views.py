@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny
 
 from .models import User, UserProfile
 from .serializers import UserModelSerializer, UserProfileModelSerializer, UserProfileUpdateSerializer, UserProfileCreateSerializer
@@ -43,9 +44,15 @@ class UserLoginView(APIView):
 class ListUsers(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserModelSerializer
-    permission_classes = [
-        UserSuperDeleteOnly,
-    ]
+    permission_classes = [UserSuperDeleteOnly]
+    def get_permissions(self):
+        """Unauthenticated users should be able to create a user.
+        """
+        if self.action == "create":
+            return [AllowAny()]
+        else:
+            return [UserSuperDeleteOnly()]
+
     def get_queryset(self):
         """Filter objects so a user only sees themself.
         If user is admin, let them see all.
