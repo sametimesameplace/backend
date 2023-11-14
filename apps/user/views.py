@@ -46,6 +46,14 @@ class ListUsers(viewsets.ModelViewSet):
     permission_classes = [
         UserSuperDeleteOnly,
     ]
+    def get_queryset(self):
+        """Filter objects so a user only sees themself.
+        If user is admin, let them see all.
+        """
+        if self.request.user.is_staff:
+            return User.objects.all()
+        else:
+            return User.objects.filter(id=self.request.user.id)
 
 
 class UserProfileModelViewSet(viewsets.ModelViewSet):
