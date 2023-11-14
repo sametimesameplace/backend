@@ -48,7 +48,6 @@ class UserLoginView(viewsets.ModelViewSet):
         )
 
 
-
 class ListUsers(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserModelSerializer
