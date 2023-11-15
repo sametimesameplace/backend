@@ -20,7 +20,7 @@ class ActivityModelSerializer(serializers.ModelSerializer):
 
 class TimePlaceModelCreateUpdateSerializer(serializers.ModelSerializer):
     """Serializer for the TimePlace model that takes interests and
-    activities as a list of integers and does not include the user_id
+    activities as a list of integers and does not include the user
     """
     class Meta:
         model = models.TimePlace
@@ -63,7 +63,7 @@ class TimePlaceModelViewSerializer(serializers.ModelSerializer):
     """Serializer for the TimePlace model that includes detailed
     information about the user, interests and activities
     """
-    user_id = UserModelSerializer()
+    user = UserModelSerializer()
     interests = InterestModelSerializer(many=True)
     activities = ActivityModelSerializer(many=True)
 
@@ -71,7 +71,7 @@ class TimePlaceModelViewSerializer(serializers.ModelSerializer):
         model = models.TimePlace
         fields = [
             "id",
-            "user_id",
+            "user",
             "start",
             "end",
             "latitude",
@@ -88,7 +88,7 @@ class TimePlaceModelAdminSerializer(serializers.ModelSerializer):
     information about the user, interests and activities, including the
     deletion state
     """
-    user_id = UserModelSerializer()
+    user = UserModelSerializer()
     interests = InterestModelSerializer(many=True)
     activities = ActivityModelSerializer(many=True)
 
@@ -96,7 +96,7 @@ class TimePlaceModelAdminSerializer(serializers.ModelSerializer):
         model = models.TimePlace
         fields = [
             "id",
-            "user_id",
+            "user",
             "start",
             "end",
             "latitude",

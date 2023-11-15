@@ -30,7 +30,7 @@ class IsAuthenticatedCreateOrSuperOrAuthor(permissions.BasePermission):
         if request.user.is_superuser:
             return True
 
-        if request.user.id == obj.user_id.id:
+        if request.user.id == obj.user.id:
             return True
 
         return False
