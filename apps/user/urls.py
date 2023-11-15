@@ -8,6 +8,7 @@ router = routers.SimpleRouter()
 router.register("api/v1/user", views.ListUsers)
 router.register("api/v1/userprofile", views.UserProfileModelViewSet)
 router.register("api/v1/userlanguage", views.UserLanguageViewSet, basename='userlanguage') 
+router.register("api/v1/language", views.LanguageViewSet, basename='language') 
 
 
 urlpatterns = [

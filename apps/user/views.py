@@ -6,16 +6,17 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from .models import User, UserProfile, UserLanguage
-from .serializers import UserModelSerializer, UserProfileModelSerializer, UserProfileUpdateSerializer, UserProfileCreateSerializer, UserLoginSerializer, UserLanguageModelSerializer
+from . import serializers
+from .models import User, UserProfile, UserLanguage, Language
+# from .serializers import UserModelSerializer, UserProfileModelSerializer, UserProfileUpdateSerializer, UserProfileCreateSerializer, UserLoginSerializer, UserLanguageModelSerializer
 from .permissions import UserSuperDeleteOnly
-from apps.timeplace.permissions import IsAuthenticatedCreateOrSuperOrAuthor
+from apps.timeplace.permissions import IsAuthenticatedCreateOrSuperOrAuthor, SuperOrReadOnly
 
 
 class UserLoginView(viewsets.ModelViewSet):
     """handle user login functionality, the associated model for this view represents user data from the authentication fields"""
         
-    serializer_class = UserLoginSerializer
+    serializer_class = serializers.UserLoginSerializer
     permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
@@ -47,7 +48,7 @@ class UserLoginView(viewsets.ModelViewSet):
 
 class ListUsers(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserModelSerializer
+    serializer_class = serializers.UserModelSerializer
     permission_classes = [UserSuperDeleteOnly]
     def get_permissions(self):
         """Unauthenticated users should be able to create a user.
@@ -75,10 +76,10 @@ class UserProfileModelViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action == "create":
-            return UserProfileCreateSerializer
+            return serializers.UserProfileCreateSerializer
         elif self.action == "update":
-            return UserProfileUpdateSerializer
-        return UserProfileModelSerializer
+            return serializers.UserProfileUpdateSerializer
+        return serializers.UserProfileModelSerializer
 
     def perform_create(self, serializer):
         """The logged in user is always the author
@@ -96,7 +97,7 @@ class UserProfileModelViewSet(viewsets.ModelViewSet):
 
 class UserLanguageViewSet(viewsets.ModelViewSet):
     queryset = UserLanguage.objects.all()
-    serializer_class = UserLanguageModelSerializer  
+    serializer_class = serializers.UserLanguageModelSerializer  
     permission_classes = [IsAuthenticated] 
     
     def get_queryset(self):
@@ -107,5 +108,9 @@ class UserLanguageViewSet(viewsets.ModelViewSet):
             return UserLanguage.objects.all()
         else:
             return UserLanguage.objects.filter(userprofile__user=self.request.user)
-    
-    
+
+
+class LanguageViewSet(viewsets.ModelViewSet):
+    queryset = Language.objects.all()
+    serializer_class = serializers.LanguageModelSerializer  
+    permission_classes = [SuperOrReadOnly] 
