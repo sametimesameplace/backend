@@ -84,7 +84,7 @@ class UserProfileModelViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """The logged in user is always the author
         """
-        return serializer.save(user_id=self.request.user)
+        return serializer.save(user=self.request.user)
 
     def get_queryset(self):
         """Limit the queryset to the author, 

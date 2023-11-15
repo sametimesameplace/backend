@@ -220,7 +220,7 @@ class TestTimePlaceEndpoints(APITestCase):
         cls.user2token = Token.objects.create(user=cls.user2)
         # Create some TimePlace objects for each user
         cls.tp1 = models.TimePlace.objects.create(
-            user_id=cls.user1,
+            user=cls.user1,
             start="2025-12-01T12:00+01:00",
             end="2025-12-01T15:00+01:00",
             latitude=20.123456,
@@ -232,7 +232,7 @@ class TestTimePlaceEndpoints(APITestCase):
         cls.tp1.activities.add(cls.activity1.id)
 
         cls.tp2 = models.TimePlace.objects.create(
-            user_id=cls.user1,
+            user=cls.user1,
             start="2025-12-02T12:00+01:00",
             end="2025-12-02T15:00+01:00",
             latitude=20.123456,
@@ -244,7 +244,7 @@ class TestTimePlaceEndpoints(APITestCase):
         cls.tp2.activities.add(cls.activity1.id, cls.activity2.id)
 
         cls.tp3 = models.TimePlace.objects.create(
-            user_id=cls.user2,
+            user=cls.user2,
             start="2025-12-02T12:00+01:00",
             end="2025-12-02T15:00+01:00",
             latitude=20.123456,
@@ -437,7 +437,7 @@ class TestTimePlaceEndpoints(APITestCase):
         """Test if user can delete his own timeplaces.
         """
         timeplace = models.TimePlace.objects.create(
-            user_id=self.user1,
+            user=self.user1,
             start="2025-12-01T12:00+01:00",
             end="2025-12-01T15:00+01:00",
             latitude=20.123456,
@@ -454,7 +454,7 @@ class TestTimePlaceEndpoints(APITestCase):
         """Test if a superuser can delete timeplaces.
         """
         timeplace = models.TimePlace.objects.create(
-            user_id=self.user1,
+            user=self.user1,
             start="2025-12-01T12:00+01:00",
             end="2025-12-01T15:00+01:00",
             latitude=20.123456,

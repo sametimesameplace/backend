@@ -36,7 +36,7 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
 
     queryset = (
         models.TimePlace.objects.all()
-        .select_related("user_id")
+        .select_related("user")
         .prefetch_related("interests", "activities")
         .order_by("-created_at")
     )
@@ -54,7 +54,7 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """The logged in user is always the author
         """
-        return serializer.save(user_id=self.request.user)
+        return serializer.save(user=self.request.user)
 
     def perform_destroy(self, instance):
         """Don't delete the instance but rather set 'deleted' to true
@@ -71,4 +71,4 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
         """
         if self.request.user.is_superuser:
             return self.queryset
-        return self.queryset.filter(user_id=self.request.user).filter(deleted=False)
+        return self.queryset.filter(user=self.request.user).filter(deleted=False)

@@ -28,7 +28,7 @@ class Activity(CreatedModifiedDateTimeBase):
 class TimePlace(CreatedModifiedDateTimeBase, SoftDelete):
     """Model to store the Timeplaces that a user creates
     """
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         "user.User", on_delete=models.CASCADE)
     start = models.DateTimeField()
     end = models.DateTimeField()
