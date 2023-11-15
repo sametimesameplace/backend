@@ -98,7 +98,6 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
         # Check if there is at least one overlapping activity
         if not main_tp.activities.all().intersection(check_tp.activities.all()):
             return False
-        # TODO: Check for language overlap while ignoring fluency
         return True
 
     @action(detail=True, methods=["GET"], url_path="matches")
@@ -107,6 +106,9 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
         """
         # the TimePlace this view belongs to
         obj = self.get_object()
+        # get the list of language ids to filter the queryset with
+        obj_langs = [lang[0] for lang in obj.user.userprofile.languages.values_list()]
+
 
         # get all timeplaces with overlapping timeframe and lat/long 
         queryset = (models.TimePlace.objects
@@ -123,6 +125,7 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
                         latitude__gte = obj.latitude - Decimal(obj.radius/100),
                         longitude__lte = obj.longitude + Decimal(obj.radius/100),
                         longitude__gte = obj.longitude - Decimal(obj.radius/100),
+                        user__userprofile__languages__id__in = obj_langs,
                     )
                     # excludes results by the same user
                     .exclude(user=obj.user)
@@ -136,7 +139,6 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
         # Exclude the results that don't match
         queryset = queryset.exclude(id__in=non_matches)
         
-        breakpoint()
 
         page = self.paginate_queryset(queryset)
         if page is not None:
