@@ -42,8 +42,8 @@ class TestUserEndpoints(APITestCase):
         """Tests that a list of users are returned for admin only"""
 
         url = reverse("user-list")
-        response = self.client.get(url)
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.supertoken.key)
+        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_list_unauthorized(self):
@@ -171,7 +171,7 @@ class TestUserEndpoints(APITestCase):
             HTTP_AUTHORIZATION="Token " + usertoken_for_deletion.key
         )
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         url = reverse("user-detail", args=(self.user.id,))
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.supertoken.key)

@@ -48,9 +48,23 @@ class UserLoginView(viewsets.ModelViewSet):
 class ListUsers(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserModelSerializer
-    permission_classes = [
-        UserSuperDeleteOnly,
-    ]
+    permission_classes = [UserSuperDeleteOnly]
+    def get_permissions(self):
+        """Unauthenticated users should be able to create a user.
+        """
+        if self.action == "create":
+            return [AllowAny()]
+        else:
+            return [UserSuperDeleteOnly()]
+
+    def get_queryset(self):
+        """Filter objects so a user only sees themself.
+        If user is admin, let them see all.
+        """
+        if self.request.user.is_staff:
+            return User.objects.all()
+        else:
+            return User.objects.filter(id=self.request.user.id)
 
 
 class UserProfileModelViewSet(viewsets.ModelViewSet):
