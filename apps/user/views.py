@@ -1,16 +1,13 @@
-from typing import Optional
-
 from django.contrib.auth import authenticate
 
 from rest_framework import viewsets
 from rest_framework import status
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from .models import User, UserProfile
-from .serializers import UserModelSerializer, UserProfileModelSerializer, UserProfileUpdateSerializer, UserProfileCreateSerializer, UserLoginSerializer
+from .models import User, UserProfile, UserLanguage
+from .serializers import UserModelSerializer, UserProfileModelSerializer, UserProfileUpdateSerializer, UserProfileCreateSerializer, UserLoginSerializer, UserLanguageModelSerializer
 from .permissions import UserSuperDeleteOnly
 from apps.timeplace.permissions import IsAuthenticatedCreateOrSuperOrAuthor
 
@@ -95,3 +92,20 @@ class UserProfileModelViewSet(viewsets.ModelViewSet):
         if self.request.user.is_superuser:
             return self.queryset
         return self.queryset.filter(user_id=self.request.user)
+
+
+class UserLanguageViewSet(viewsets.ModelViewSet):
+    queryset = UserLanguage.objects.all()
+    serializer_class = UserLanguageModelSerializer  
+    permission_classes = [IsAuthenticated] 
+    
+    def get_queryset(self):
+        """Filter objects so a user only his UserLanguage.
+        If user is admin, let them see all.
+        """
+        if self.request.user.is_superuser:
+            return UserLanguage.objects.all()
+        else:
+            return UserLanguage.objects.filter(userprofile__user=self.request.user)
+    
+    
