@@ -45,6 +45,13 @@ class UserLanguageModelSerializer(serializers.ModelSerializer):
         fields = ('id', 'userprofile', 'language', 'level')
 
 
+class UserLanguageCreateUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.UserLanguage
+        fields = ('id', 'language', 'level')
+
+
 class UserProfileModelSerializer(serializers.ModelSerializer):
     user = UserModelSerializer()
     languages = UserLanguageModelSerializer(many=True, source='user_language')
