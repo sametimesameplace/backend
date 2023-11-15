@@ -98,3 +98,14 @@ class UserLanguageViewSet(viewsets.ModelViewSet):
     queryset = UserLanguage.objects.all()
     serializer_class = UserLanguageModelSerializer  
     permission_classes = [IsAuthenticated] 
+    
+    def get_queryset(self):
+        """Filter objects so a user only his UserLanguage.
+        If user is admin, let them see all.
+        """
+        if self.request.user.is_superuser:
+            return UserLanguage.objects.all()
+        else:
+            return UserLanguage.objects.filter(userprofile__user=self.request.user)
+    
+    
