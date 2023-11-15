@@ -1,7 +1,11 @@
 from datetime import datetime, timezone
+from decimal import Decimal
 
 from rest_framework import viewsets
+from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.decorators import action
+from geopy.distance import distance
 
 from . import models, permissions, serializers
 
@@ -72,3 +76,72 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
         if self.request.user.is_superuser:
             return self.queryset
         return self.queryset.filter(user=self.request.user).filter(deleted=False)
+
+    def check_match(self, main_tp, check_tp):
+        """Checks if two timeplaces are a match.
+
+        Args:
+            main_tp (TimePlace): The main timeplace to check against.
+            check_tp (TimePlace): The potential match to check.
+
+        Returns:
+            bool: True if match, False if not.
+        """
+        # Check if the distance between the timeplaces is within the smallest radius
+        radius = min(main_tp.radius, check_tp.radius)
+        if radius < distance((main_tp.latitude, main_tp.longitude),
+                             (check_tp.latitude, check_tp.longitude)).km:
+            return False
+        # Check if there is at least one overlapping interest
+        if not main_tp.interests.all().intersection(check_tp.interests.all()):
+            return False
+        # Check if there is at least one overlapping activity
+        if not main_tp.activities.all().intersection(check_tp.activities.all()):
+            return False
+        # TODO: Check for language overlap while ignoring fluency
+        return True
+
+    @action(detail=True, methods=["GET"], url_path="matches")
+    def matches(self, request, *args, **kwargs):
+        """View all potential matches of a Timeplace
+        """
+        # the TimePlace this view belongs to
+        obj = self.get_object()
+
+        # get all timeplaces with overlapping timeframe and lat/long 
+        queryset = (models.TimePlace.objects
+                    .select_related("user", "user__userprofile")
+                    .prefetch_related("interests", "activities", 
+                                      "user__userprofile__languages")
+                    .all()
+                    .filter(
+                        # filter start and end time to be less/greater than obj
+                        start__lte = obj.end,
+                        end__gte = obj.start,
+                        # .1° is about 11km, so dividing the radius by 100
+                        latitude__lte = obj.latitude + Decimal(obj.radius/100),
+                        latitude__gte = obj.latitude - Decimal(obj.radius/100),
+                        longitude__lte = obj.longitude + Decimal(obj.radius/100),
+                        longitude__gte = obj.longitude - Decimal(obj.radius/100),
+                    )
+                    # excludes results by the same user
+                    .exclude(user=obj.user)
+                    .order_by("start")
+                )
+        # Check each potential match for distance, interests and activities
+        non_matches = []
+        for tp in queryset:
+            if not self.check_match(obj, tp):
+                non_matches.append(tp.id)
+        # Exclude the results that don't match
+        queryset = queryset.exclude(id__in=non_matches)
+        
+        breakpoint()
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = serializers.TimePlaceMatchSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = serializers.TimePlaceMatchSerializer(queryset, many=True)
+        return Response(serializer.data)

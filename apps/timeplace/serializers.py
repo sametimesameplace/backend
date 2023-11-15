@@ -109,3 +109,17 @@ class TimePlaceModelAdminSerializer(serializers.ModelSerializer):
             "deleted_on"
         ]
 
+
+class TimePlaceMatchSerializer(serializers.ModelSerializer):
+    """Serializer to show the matches for a Timeplace
+    """
+            
+    class Meta:
+        model = models.TimePlace
+        fields = [
+            "id",
+            "user_id",
+            "description",
+            "interests",
+            "activities",
+        ]
