@@ -128,7 +128,7 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
                         user__userprofile__languages__id__in = obj_langs,
                     )
                     # excludes results by the same user
-                    .exclude(user=obj.user)
+                    .exclude(user=obj.user, deleted=True)
                     .order_by("start")
                 )
         # Check each potential match for distance, interests and activities
