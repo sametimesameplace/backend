@@ -97,8 +97,19 @@ class UserProfileModelViewSet(viewsets.ModelViewSet):
 
 class UserLanguageViewSet(viewsets.ModelViewSet):
     queryset = UserLanguage.objects.all()
-    serializer_class = serializers.UserLanguageModelSerializer  
-    permission_classes = [IsAuthenticated] 
+    serializer_class = serializers.UserLanguageModelSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_serializer_class(self):
+        if self.action in ("create", "update"):
+            return serializers.UserLanguageCreateUpdateSerializer
+        return serializers.UserLanguageModelSerializer
+    
+    def perform_create(self, serializer):
+        """Always use the userprofile of the logged in user.
+        """
+        userprofile = UserProfile.objects.get(user=self.request.user)
+        return serializer.save(userprofile=userprofile)
     
     def get_queryset(self):
         """Filter objects so a user only his UserLanguage.
