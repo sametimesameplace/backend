@@ -110,12 +110,14 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
         obj_langs = [lang[0] for lang in obj.user.userprofile.languages.values_list()]
 
 
-        # get all timeplaces with overlapping timeframe and lat/long 
+        # get all timeplaces with overlapping timeframe and lat/long
         queryset = (models.TimePlace.objects
                     .select_related("user", "user__userprofile")
-                    .prefetch_related("interests", "activities", 
+                    .prefetch_related("interests", "activities",
                                       "user__userprofile__languages")
-                    .all()
+                    # excludes results by the same user
+                    .exclude(user=obj.user)
+                    .exclude(deleted=True)
                     .filter(
                         # filter start and end time to be less/greater than obj
                         start__lte = obj.end,
@@ -127,8 +129,7 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
                         longitude__gte = obj.longitude - Decimal(obj.radius/100),
                         user__userprofile__languages__id__in = obj_langs,
                     )
-                    # excludes results by the same user
-                    .exclude(user=obj.user, deleted=True)
+                    .distinct()
                     .order_by("start")
                 )
         # Check each potential match for distance, interests and activities
@@ -138,7 +139,6 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
                 non_matches.append(tp.id)
         # Exclude the results that don't match
         queryset = queryset.exclude(id__in=non_matches)
-        
 
         page = self.paginate_queryset(queryset)
         if page is not None:
