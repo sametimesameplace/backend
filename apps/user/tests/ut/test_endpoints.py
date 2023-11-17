@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 from rest_framework.authtoken.models import Token
 
 
-from apps.user.models import User, UserProfile
+from apps.user.models import User, UserProfile, Language
 
 
 class TestUserEndpoints(APITestCase):
@@ -200,3 +200,131 @@ class TestUserEndpoints(APITestCase):
         )
         response = self.client.put(url, data=new_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestUserLanguageEndpoints(APITestCase):
+    """
+    Tests for the UserLanguage endpoints.
+    """
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser",
+            password="testpassword",
+            email="test@example.com",
+        )
+
+        self.profile = UserProfile.objects.create(
+            user=self.user,
+            name='Test User',
+            hometown='Test Hometown',
+            slogan='Test Slogan',
+            birthday='1990-01-01',
+            gender='M',
+            phone='1234567890',
+            profile_email='testuser@example.com'
+        )
+
+        self.language = Language.objects.create(lang="English")
+
+        self.url_list = reverse("userlanguage-list")
+        
+    def create_user_language_data(self, level='Fluent'):
+        """
+        Helper method to create user language data.
+        """
+        return {
+            'userprofile': self.profile.id,
+            'language': self.language.id,
+            'level': level,
+        }
+
+    def assert_status_code(self, response, expected_status):
+        """
+        Helper method to assert the status code of a response.
+        """
+        self.assertEqual(response.status_code, expected_status)
+    
+    def test_create_user_language_authenticated(self):
+        """
+        Test the creation of a UserLanguage object when the user is authenticated.
+        """
+        self.client.force_authenticate(user=self.user)
+
+        user_language_data = self.create_user_language_data()
+
+        response = self.client.post(self.url_list, data=user_language_data, format='json')
+        self.assert_status_code(response, status.HTTP_201_CREATED)
+
+    def test_create_user_language_unauthenticated(self):
+        """
+        Test of rejection a UserLanguage creation when the user is unauthenticated.
+        """
+        user_language_data = self.create_user_language_data()
+
+        response = self.client.post(self.url_list, data=user_language_data, format='json')
+        self.assert_status_code(response, status.HTTP_401_UNAUTHORIZED)
+        
+        
+    def test_list_user_languages_authenticated(self):
+        """
+        Test listing his own UserLanguages when the user is authenticated.
+        """
+        self.client.force_authenticate(user=self.user)
+
+        user_language_data = self.create_user_language_data()
+
+        response_create = self.client.post(self.url_list, data=user_language_data, format='json')
+        self.assert_status_code(response_create, status.HTTP_201_CREATED)
+
+        response_list = self.client.get(self.url_list)
+        self.assert_status_code(response_list, status.HTTP_200_OK)
+
+        self.assertEqual(len(response_list.data), 1)
+        self.assertEqual(response_list.data[0]['userprofile'], self.profile.id)
+        self.assertEqual(response_list.data[0]['language'], 'English')
+        self.assertEqual(response_list.data[0]['level'], 'Fluent')
+
+    def test_list_user_languages_unauthenticated(self):
+        """
+        Test of the rejection of UserLanguages listing if the user is not authenticated.
+        """
+        response_list = self.client.get(self.url_list)
+        self.assertEqual(response_list.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_update_user_language_authenticated(self):
+        """
+        Test that an authenticated user can update the details of their own UserLanguage.
+        """
+        self.client.force_authenticate(user=self.user)
+
+        user_language_data = self.create_user_language_data()
+        
+        response_create = self.client.post(self.url_list, data=user_language_data, format='json')
+        
+        self.assertEqual(response_create.status_code, status.HTTP_201_CREATED)
+
+        user_language_id = response_create.data['id']
+        updated_data = {'level': 'Preferred'}
+        url_update = reverse("userlanguage-detail", args=[user_language_id])
+        response_update = self.client.patch(url_update, data=updated_data, format='json')
+        
+        self.assertEqual(response_update.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_update.data['level'], 'Preferred')
+        
+    def test_delete_user_language_authenticated(self):
+        """
+        Test that an authenticated user can delete their own UserLanguage object. 
+        """
+        self.client.force_authenticate(user=self.user)
+
+        user_language_data = self.create_user_language_data()
+        
+        response_create = self.client.post(self.url_list, data=user_language_data, format='json')
+        self.assertEqual(response_create.status_code, status.HTTP_201_CREATED)
+
+        user_language_id = response_create.data['id']
+        url_delete = reverse("userlanguage-detail", args=[user_language_id])
+        response_delete = self.client.delete(url_delete)
+        self.assertEqual(response_delete.status_code, status.HTTP_204_NO_CONTENT)
+        
+    
