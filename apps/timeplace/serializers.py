@@ -113,12 +113,12 @@ class TimePlaceModelAdminSerializer(serializers.ModelSerializer):
 class TimePlaceMatchSerializer(serializers.ModelSerializer):
     """Serializer to show the matches for a Timeplace
     """
-            
+
     class Meta:
         model = models.TimePlace
         fields = [
             "id",
-            "user_id",
+            "user",
             "description",
             "interests",
             "activities",
