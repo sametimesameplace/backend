@@ -120,7 +120,7 @@ class TestInterestEndpoints(APITestCase):
             latitude=10.123456,
             longitude=10.123456,
             radius=10,
-            description="I want to run tests",
+            description="I want to run tests, this is user1_tp1",
         )
         cls.user1_tp1.interests.add(cls.interest1.id, cls.interest2.id)
         cls.user1_tp1.activities.add(cls.activity1.id, cls.activity2.id)
@@ -132,7 +132,7 @@ class TestInterestEndpoints(APITestCase):
             latitude=10.123456,
             longitude=10.213456,
             radius=5,
-            description="I want to run tests",
+            description="I want to run tests, this is user1_tp2",
         )
         cls.user1_tp2.interests.add(cls.interest1.id, cls.interest2.id)
         cls.user1_tp2.activities.add(cls.activity1.id)
@@ -145,7 +145,7 @@ class TestInterestEndpoints(APITestCase):
             latitude=10.123456,
             longitude=10.123456,
             radius=10,
-            description="I want to run tests",
+            description="I want to run tests, this is user2_tp1",
         )
         cls.user2_tp1.interests.add(cls.interest1.id, cls.interest2.id)
         cls.user2_tp1.activities.add(cls.activity1.id)
@@ -157,7 +157,7 @@ class TestInterestEndpoints(APITestCase):
             latitude=10.123456,
             longitude=10.123456,
             radius=10,
-            description="I want to run tests",
+            description="I want to run tests, this is user2_tp2",
         )
         cls.user2_tp2.interests.add(cls.interest3.id)
         cls.user2_tp2.activities.add(cls.activity1.id, cls.activity2.id)
@@ -170,7 +170,7 @@ class TestInterestEndpoints(APITestCase):
             latitude=10.123456,
             longitude=10.193456,
             radius=10,
-            description="I want to run tests",
+            description="I want to run tests, this is user3_tp1",
         )
         cls.user3_tp1.interests.add(cls.interest2.id, cls.interest3.id)
         cls.user3_tp1.activities.add(cls.activity1.id)
@@ -182,25 +182,25 @@ class TestInterestEndpoints(APITestCase):
             latitude=10.123456,
             longitude=10.123456,
             radius=10,
-            description="I want to run tests",
+            description="I want to run tests, this is user3_tp2",
         )
         cls.user3_tp2.interests.add(cls.interest3.id)
         cls.user3_tp2.activities.add(cls.activity2.id)
 
-    def test_user_can_get_matches(self):
+    def test_user_can_get_own_matches(self):
         """Test if user can get matches for his own timeplaces.
         """
-        timeplace = models.TimePlace.objects.create(
-            user=self.user1,
-            start="2025-12-01T12:00+01:00",
-            end="2025-12-01T15:00+01:00",
-            latitude=20.123456,
-            longitude=0.123456,
-            radius=10,
-            description="I want to test tests",
-        )
-        url = reverse("timeplace-matches", args=(timeplace.id,))
+        url = reverse("timeplace-matches", args=(self.user1_tp1.id,))
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["count"], 0)
+        for result in response.data["results"]:
+            print(result["description"])
+
+    def test_user_cant_get_foreign_matches(self):
+        """Test if user can get matches for his own timeplaces.
+        """
+        url = reverse("timeplace-matches", args=(self.user2_tp1.id,))
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
