@@ -14,11 +14,11 @@ class Match(CreatedModifiedDateTimeBase, SoftDelete):
     timeplace_2 = models.ForeignKey(
         "timeplace.TimePlace", on_delete=models.CASCADE, related_name="timeplace_2"
     )
-    email_user_1 = models.BooleanField()
-    email_user_2 = models.BooleanField()
-    phone_user_1 = models.BooleanField()
-    phone_user_2 = models.BooleanField()
-    chat_accepted = models.BooleanField()
+    email_user_1 = models.BooleanField(default=False)
+    email_user_2 = models.BooleanField(default=False)
+    phone_user_1 = models.BooleanField(default=False)
+    phone_user_2 = models.BooleanField(default=False)
+    chat_accepted = models.BooleanField(default=False)
 
 
 class MatchChat(CreatedModifiedDateTimeBase):
