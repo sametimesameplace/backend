@@ -4,10 +4,13 @@ from decimal import Decimal
 from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework import status
+from rest_framework import serializers as drf_serializers
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import action
 from geopy.distance import distance
+from drf_spectacular.utils import extend_schema, inline_serializer
+from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, OpenApiResponse
 
 from apps.match.models import Match
 from . import models, permissions, serializers
@@ -35,7 +38,6 @@ class ActivityViewSet(viewsets.ModelViewSet):
     queryset = models.Activity.objects.all().order_by("name")
 
     serializer_class = serializers.ActivityModelSerializer
-
 
 class TimePlaceViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedCreateOrSuperOrAuthor,)
@@ -151,11 +153,25 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
         serializer = serializers.TimePlaceMatchSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    @extend_schema(
+        parameters=[OpenApiParameter("timeplace_pk",
+                    OpenApiTypes.INT,
+                    OpenApiParameter.PATH),],
+        description="Create a new match object for two timeplaces.",
+        responses={
+            200: inline_serializer(
+                name='get_match_response',
+                fields={
+                    'match_id': drf_serializers.IntegerField(),
+                }
+            )
+            }
+        )
     @action(detail=True, methods=["GET"], url_path="match/(?P<timeplace_pk>[^/.]+)")
-    def get_match(self, request, timeplace_pk, pk=None):
-        """GET: Check if there is an existing match object between two timeplaces.
-        POST: Create a new match object for for two timeplaces.
+    def get_match(self, request, timeplace_pk: int, pk=None):
+        """Check if there is an existing match object between two timeplaces.
         """
+        
         own_tp = self.get_object().id
         other_tp = timeplace_pk
 
@@ -171,8 +187,24 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
                 )
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+    @extend_schema(
+        parameters=[OpenApiParameter("timeplace_pk",
+                    OpenApiTypes.INT,
+                    OpenApiParameter.PATH),],
+        description="Create a new match object for two timeplaces.",
+        request=None,
+        responses={
+            201: inline_serializer(
+                name='create_match_response',
+                fields={
+                    'match_id': drf_serializers.IntegerField(),
+                }
+            ), 
+            403: OpenApiResponse(description='Match already exists'),
+            }
+        )
     @get_match.mapping.post
-    def create_match(self, request, timeplace_pk, pk=None):
+    def create_match(self, request, timeplace_pk: int, pk=None):
         """Create a new match object for two timeplaces.
         """
         own_tp = self.get_object()

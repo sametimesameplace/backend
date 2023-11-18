@@ -1,0 +1,1911 @@
+openapi: 3.0.3
+info:
+  title: SameTimeSamePlace API
+  version: 0.1.0
+  description: Find friends for an adventure.
+paths:
+  /api/v1/activity/:
+    get:
+      operationId: activity_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - activity
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedActivityModelList'
+          description: ''
+    post:
+      operationId: activity_create
+      tags:
+      - activity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivityModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ActivityModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ActivityModel'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityModel'
+          description: ''
+  /api/v1/activity/{id}/:
+    get:
+      operationId: activity_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this activity.
+        required: true
+      tags:
+      - activity
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityModel'
+          description: ''
+    put:
+      operationId: activity_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this activity.
+        required: true
+      tags:
+      - activity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivityModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ActivityModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ActivityModel'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityModel'
+          description: ''
+    patch:
+      operationId: activity_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this activity.
+        required: true
+      tags:
+      - activity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedActivityModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedActivityModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedActivityModel'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityModel'
+          description: ''
+    delete:
+      operationId: activity_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this activity.
+        required: true
+      tags:
+      - activity
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/interest/:
+    get:
+      operationId: interest_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - interest
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedInterestModelList'
+          description: ''
+    post:
+      operationId: interest_create
+      tags:
+      - interest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InterestModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/InterestModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/InterestModel'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InterestModel'
+          description: ''
+  /api/v1/interest/{id}/:
+    get:
+      operationId: interest_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this interest.
+        required: true
+      tags:
+      - interest
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InterestModel'
+          description: ''
+    put:
+      operationId: interest_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this interest.
+        required: true
+      tags:
+      - interest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InterestModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/InterestModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/InterestModel'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InterestModel'
+          description: ''
+    patch:
+      operationId: interest_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this interest.
+        required: true
+      tags:
+      - interest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedInterestModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedInterestModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedInterestModel'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InterestModel'
+          description: ''
+    delete:
+      operationId: interest_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this interest.
+        required: true
+      tags:
+      - interest
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/language/:
+    get:
+      operationId: language_list
+      tags:
+      - language
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LanguageModel'
+          description: ''
+    post:
+      operationId: language_create
+      tags:
+      - language
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LanguageModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LanguageModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LanguageModel'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LanguageModel'
+          description: ''
+  /api/v1/language/{id}/:
+    get:
+      operationId: language_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this language.
+        required: true
+      tags:
+      - language
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LanguageModel'
+          description: ''
+    put:
+      operationId: language_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this language.
+        required: true
+      tags:
+      - language
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LanguageModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LanguageModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LanguageModel'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LanguageModel'
+          description: ''
+    patch:
+      operationId: language_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this language.
+        required: true
+      tags:
+      - language
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLanguageModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLanguageModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLanguageModel'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LanguageModel'
+          description: ''
+    delete:
+      operationId: language_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this language.
+        required: true
+      tags:
+      - language
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/login:
+    post:
+      operationId: login_create
+      description: validating the incoming data, authenticating the user based on
+        the provided credentials, and generating a token for the authenticated user.
+      tags:
+      - login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLogin'
+          description: ''
+  /api/v1/match/:
+    get:
+      operationId: match_list
+      tags:
+      - match
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MatchModel'
+          description: ''
+    post:
+      operationId: match_create
+      tags:
+      - match
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MatchModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MatchModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MatchModel'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchModel'
+          description: ''
+  /api/v1/match/{id}/:
+    get:
+      operationId: match_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this match.
+        required: true
+      tags:
+      - match
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchModel'
+          description: ''
+    put:
+      operationId: match_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this match.
+        required: true
+      tags:
+      - match
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MatchModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MatchModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MatchModel'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchModel'
+          description: ''
+    patch:
+      operationId: match_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this match.
+        required: true
+      tags:
+      - match
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedMatchModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedMatchModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedMatchModel'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchModel'
+          description: ''
+    delete:
+      operationId: match_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this match.
+        required: true
+      tags:
+      - match
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/match/{id}/chat/:
+    get:
+      operationId: match_chat_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this match.
+        required: true
+      tags:
+      - match
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchModel'
+          description: ''
+  /api/v1/timeplace/:
+    get:
+      operationId: timeplace_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - timeplace
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTimePlaceModelViewList'
+          description: ''
+    post:
+      operationId: timeplace_create
+      tags:
+      - timeplace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimePlaceModelCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TimePlaceModelCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TimePlaceModelCreateUpdate'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimePlaceModelCreateUpdate'
+          description: ''
+  /api/v1/timeplace/{id}/:
+    get:
+      operationId: timeplace_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this time place.
+        required: true
+      tags:
+      - timeplace
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimePlaceModelView'
+          description: ''
+    put:
+      operationId: timeplace_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this time place.
+        required: true
+      tags:
+      - timeplace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimePlaceModelCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TimePlaceModelCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TimePlaceModelCreateUpdate'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimePlaceModelCreateUpdate'
+          description: ''
+    patch:
+      operationId: timeplace_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this time place.
+        required: true
+      tags:
+      - timeplace
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTimePlaceModelView'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTimePlaceModelView'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTimePlaceModelView'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimePlaceModelView'
+          description: ''
+    delete:
+      operationId: timeplace_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this time place.
+        required: true
+      tags:
+      - timeplace
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/timeplace/{id}/match/{timeplace_pk}/:
+    get:
+      operationId: timeplace_match_retrieve
+      description: Create a new match object for two timeplaces.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this time place.
+        required: true
+      - in: path
+        name: timeplace_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - timeplace
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get_match_response'
+          description: ''
+    post:
+      operationId: timeplace_match_create
+      description: Create a new match object for two timeplaces.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this time place.
+        required: true
+      - in: path
+        name: timeplace_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - timeplace
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/create_match_response'
+          description: ''
+        '403':
+          description: Match already exists
+  /api/v1/timeplace/{id}/matches/:
+    get:
+      operationId: timeplace_matches_retrieve
+      description: View all potential matches of a Timeplace
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this time place.
+        required: true
+      tags:
+      - timeplace
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimePlaceModelView'
+          description: ''
+  /api/v1/user/:
+    get:
+      operationId: user_list
+      tags:
+      - user
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserModel'
+          description: ''
+    post:
+      operationId: user_create
+      tags:
+      - user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserModel'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserModel'
+          description: ''
+  /api/v1/user/{id}/:
+    get:
+      operationId: user_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - user
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserModel'
+          description: ''
+    put:
+      operationId: user_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserModel'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserModel'
+          description: ''
+    patch:
+      operationId: user_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserModel'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserModel'
+          description: ''
+    delete:
+      operationId: user_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - user
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/userlanguage/:
+    get:
+      operationId: userlanguage_list
+      tags:
+      - userlanguage
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserLanguageModel'
+          description: ''
+    post:
+      operationId: userlanguage_create
+      tags:
+      - userlanguage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLanguageCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserLanguageCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserLanguageCreateUpdate'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLanguageCreateUpdate'
+          description: ''
+  /api/v1/userlanguage/{id}/:
+    get:
+      operationId: userlanguage_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user language.
+        required: true
+      tags:
+      - userlanguage
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLanguageModel'
+          description: ''
+    put:
+      operationId: userlanguage_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user language.
+        required: true
+      tags:
+      - userlanguage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLanguageCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserLanguageCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserLanguageCreateUpdate'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLanguageCreateUpdate'
+          description: ''
+    patch:
+      operationId: userlanguage_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user language.
+        required: true
+      tags:
+      - userlanguage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserLanguageModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserLanguageModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserLanguageModel'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLanguageModel'
+          description: ''
+    delete:
+      operationId: userlanguage_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user language.
+        required: true
+      tags:
+      - userlanguage
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/userprofile/:
+    get:
+      operationId: userprofile_list
+      tags:
+      - userprofile
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserProfileModel'
+          description: ''
+    post:
+      operationId: userprofile_create
+      tags:
+      - userprofile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserProfileCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserProfileCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileCreate'
+          description: ''
+  /api/v1/userprofile/{id}/:
+    get:
+      operationId: userprofile_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user profile.
+        required: true
+      tags:
+      - userprofile
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileModel'
+          description: ''
+    put:
+      operationId: userprofile_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user profile.
+        required: true
+      tags:
+      - userprofile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserProfileUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserProfileUpdate'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileUpdate'
+          description: ''
+    patch:
+      operationId: userprofile_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user profile.
+        required: true
+      tags:
+      - userprofile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfileModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfileModel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfileModel'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileModel'
+          description: ''
+    delete:
+      operationId: userprofile_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user profile.
+        required: true
+      tags:
+      - userprofile
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    ActivityModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+      required:
+      - id
+      - name
+    GenderEnum:
+      enum:
+      - M
+      - F
+      - D
+      type: string
+      description: |-
+        * `M` - Male
+        * `F` - Female
+        * `D` - Diverse
+    InterestModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+      required:
+      - id
+      - name
+    LanguageModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        lang:
+          type: string
+          maxLength: 255
+      required:
+      - id
+      - lang
+    LevelEnum:
+      enum:
+      - Learning
+      - Fluent
+      - Preferred
+      type: string
+      description: |-
+        * `Learning` - Learning
+        * `Fluent` - Fluent
+        * `Preferred` - Preferred
+    MatchModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        timeplace_1:
+          type: integer
+        timeplace_2:
+          type: integer
+        email_user_1:
+          type: boolean
+        email_user_2:
+          type: boolean
+        phone_user_1:
+          type: boolean
+        phone_user_2:
+          type: boolean
+        chat_accepted:
+          type: boolean
+      required:
+      - id
+      - timeplace_1
+      - timeplace_2
+    PaginatedActivityModelList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityModel'
+    PaginatedInterestModelList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/InterestModel'
+    PaginatedTimePlaceModelViewList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimePlaceModelView'
+    PatchedActivityModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+    PatchedInterestModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+    PatchedLanguageModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        lang:
+          type: string
+          maxLength: 255
+    PatchedMatchModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        timeplace_1:
+          type: integer
+        timeplace_2:
+          type: integer
+        email_user_1:
+          type: boolean
+        email_user_2:
+          type: boolean
+        phone_user_1:
+          type: boolean
+        phone_user_2:
+          type: boolean
+        chat_accepted:
+          type: boolean
+    PatchedTimePlaceModelView:
+      type: object
+      description: |-
+        Serializer for the TimePlace model that includes detailed
+        information about the user, interests and activities
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          $ref: '#/components/schemas/UserModel'
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+        radius:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        description:
+          type: string
+          maxLength: 500
+        interests:
+          type: array
+          items:
+            $ref: '#/components/schemas/InterestModel'
+        activities:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityModel'
+    PatchedUserLanguageModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        userprofile:
+          type: integer
+        language:
+          type: string
+          readOnly: true
+        level:
+          $ref: '#/components/schemas/LevelEnum'
+    PatchedUserModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        date_joined:
+          type: string
+          format: date-time
+        bio:
+          type: string
+        title:
+          type: string
+          nullable: true
+          description: Your profession
+          maxLength: 100
+    PatchedUserProfileModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          $ref: '#/components/schemas/UserModel'
+        name:
+          type: string
+          maxLength: 255
+        hometown:
+          type: string
+          maxLength: 255
+        slogan:
+          type: string
+          maxLength: 255
+        birthday:
+          type: string
+          format: date
+        gender:
+          $ref: '#/components/schemas/GenderEnum'
+        phone:
+          type: string
+          maxLength: 20
+        profile_email:
+          type: string
+          format: email
+          maxLength: 254
+        languages:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserLanguageModel'
+        age:
+          type: integer
+          readOnly: true
+    TimePlaceModelCreateUpdate:
+      type: object
+      description: |-
+        Serializer for the TimePlace model that takes interests and
+        activities as a list of integers and does not include the user
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+        radius:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        description:
+          type: string
+          maxLength: 500
+        interests:
+          type: array
+          items:
+            type: integer
+        activities:
+          type: array
+          items:
+            type: integer
+      required:
+      - activities
+      - description
+      - end
+      - id
+      - interests
+      - latitude
+      - longitude
+      - radius
+      - start
+    TimePlaceModelView:
+      type: object
+      description: |-
+        Serializer for the TimePlace model that includes detailed
+        information about the user, interests and activities
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          $ref: '#/components/schemas/UserModel'
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+        radius:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        description:
+          type: string
+          maxLength: 500
+        interests:
+          type: array
+          items:
+            $ref: '#/components/schemas/InterestModel'
+        activities:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityModel'
+      required:
+      - activities
+      - description
+      - end
+      - id
+      - interests
+      - latitude
+      - longitude
+      - radius
+      - start
+      - user
+    UserLanguageCreateUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        language:
+          type: integer
+        level:
+          $ref: '#/components/schemas/LevelEnum'
+      required:
+      - id
+      - language
+      - level
+    UserLanguageModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        userprofile:
+          type: integer
+        language:
+          type: string
+          readOnly: true
+        level:
+          $ref: '#/components/schemas/LevelEnum'
+      required:
+      - id
+      - language
+      - level
+      - userprofile
+    UserLogin:
+      type: object
+      description: ensures that both the username and password fields are present
+        in the input data
+      properties:
+        username:
+          type: string
+          maxLength: 255
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - password
+      - username
+    UserModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        date_joined:
+          type: string
+          format: date-time
+        bio:
+          type: string
+        title:
+          type: string
+          nullable: true
+          description: Your profession
+          maxLength: 100
+      required:
+      - email
+      - id
+      - password
+      - username
+    UserProfileCreate:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        hometown:
+          type: string
+          maxLength: 255
+        slogan:
+          type: string
+          maxLength: 255
+        birthday:
+          type: string
+          format: date
+        gender:
+          $ref: '#/components/schemas/GenderEnum'
+        phone:
+          type: string
+          maxLength: 20
+        profile_email:
+          type: string
+          format: email
+          maxLength: 254
+      required:
+      - birthday
+      - gender
+      - hometown
+      - name
+      - phone
+      - profile_email
+      - slogan
+    UserProfileModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          $ref: '#/components/schemas/UserModel'
+        name:
+          type: string
+          maxLength: 255
+        hometown:
+          type: string
+          maxLength: 255
+        slogan:
+          type: string
+          maxLength: 255
+        birthday:
+          type: string
+          format: date
+        gender:
+          $ref: '#/components/schemas/GenderEnum'
+        phone:
+          type: string
+          maxLength: 20
+        profile_email:
+          type: string
+          format: email
+          maxLength: 254
+        languages:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserLanguageModel'
+        age:
+          type: integer
+          readOnly: true
+      required:
+      - age
+      - birthday
+      - gender
+      - hometown
+      - id
+      - languages
+      - name
+      - phone
+      - profile_email
+      - slogan
+      - user
+    UserProfileUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        hometown:
+          type: string
+          maxLength: 255
+        slogan:
+          type: string
+          maxLength: 255
+        gender:
+          $ref: '#/components/schemas/GenderEnum'
+        phone:
+          type: string
+          maxLength: 20
+        profile_email:
+          type: string
+          format: email
+          maxLength: 254
+      required:
+      - gender
+      - hometown
+      - name
+      - phone
+      - profile_email
+      - slogan
+    create_match_response:
+      type: object
+      properties:
+        match_id:
+          type: integer
+      required:
+      - match_id
+    get_match_response:
+      type: object
+      properties:
+        match_id:
+          type: integer
+      required:
+      - match_id
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"
