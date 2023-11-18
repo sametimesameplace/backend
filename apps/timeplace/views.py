@@ -1,12 +1,15 @@
 from datetime import datetime, timezone
 from decimal import Decimal
 
+from django.db.models import Q
 from rest_framework import viewsets
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import action
 from geopy.distance import distance
 
+from apps.match.models import Match
 from . import models, permissions, serializers
 
 
@@ -147,3 +150,53 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
 
         serializer = serializers.TimePlaceMatchSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    @action(detail=True, methods=["GET"], url_path="match/(?P<timeplace_pk>[^/.]+)")
+    def get_match(self, request, timeplace_pk, pk=None):
+        """GET: Check if there is an existing match object between two timeplaces.
+        POST: Create a new match object for for two timeplaces.
+        """
+        own_tp = self.get_object().id
+        other_tp = timeplace_pk
+
+        queryset = Match.objects.filter(
+            (Q(timeplace_1_id=own_tp) | Q(timeplace_1_id=other_tp)) &
+            (Q(timeplace_2_id=own_tp) | Q(timeplace_2_id=other_tp))
+        )
+
+        if queryset:
+            return Response(
+                {"match_id": queryset[0].id},
+                status=status.HTTP_200_OK
+                )
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    @get_match.mapping.post
+    def create_match(self, request, timeplace_pk, pk=None):
+        """Create a new match object for two timeplaces.
+        """
+        own_tp = self.get_object()
+        other_tp = models.TimePlace.objects.get(pk=timeplace_pk)
+
+        # Check if a match between the two timeplaces already exists
+        queryset = Match.objects.filter(
+            (Q(timeplace_1=own_tp) | Q(timeplace_1=other_tp)) &
+            (Q(timeplace_2=own_tp) | Q(timeplace_2=other_tp))
+        )
+
+        if queryset:
+            return Response(
+                {"error": "Match already exists",
+                "match_id": queryset[0].id},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        # Create a new match object and return the ID
+        match_obj = Match.objects.create(
+            timeplace_1=own_tp,
+            timeplace_2=other_tp
+        )
+        return Response(
+            {"match_id": match_obj.id},
+            status=status.HTTP_201_CREATED
+        )
