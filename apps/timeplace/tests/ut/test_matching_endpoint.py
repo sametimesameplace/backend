@@ -194,8 +194,6 @@ class TestInterestEndpoints(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        for result in response.data["results"]:
-            print(result["description"])
 
     def test_user_cant_get_foreign_matches(self):
         """Test if user can get matches for his own timeplaces.
