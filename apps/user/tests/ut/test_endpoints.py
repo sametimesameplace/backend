@@ -279,10 +279,10 @@ class TestUserLanguageEndpoints(APITestCase):
         response_list = self.client.get(self.url_list)
         self.assert_status_code(response_list, status.HTTP_200_OK)
 
-        self.assertEqual(len(response_list.data), 1)
-        self.assertEqual(response_list.data[0]['userprofile'], self.profile.id)
-        self.assertEqual(response_list.data[0]['language'], 'English')
-        self.assertEqual(response_list.data[0]['level'], 'Fluent')
+        self.assertEqual(len(response_list.data["results"]), 1)
+        self.assertEqual(response_list.data["results"][0]['userprofile'], self.profile.id)
+        self.assertEqual(response_list.data["results"][0]['language'], 'English')
+        self.assertEqual(response_list.data["results"][0]['level'], 'Fluent')
 
     def test_list_user_languages_unauthenticated(self):
         """
