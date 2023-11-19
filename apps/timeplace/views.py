@@ -6,7 +6,6 @@ from rest_framework import viewsets
 from rest_framework import status
 from rest_framework import serializers as drf_serializers
 from rest_framework.response import Response
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import action
 from geopy.distance import distance
 from drf_spectacular.utils import extend_schema, inline_serializer
@@ -16,15 +15,8 @@ from apps.match.models import Match
 from . import models, permissions, serializers
 
 
-class StandardPagination(PageNumberPagination):
-    page_size = 20
-    page_size_query_param = "page_size"
-    max_page_size = 100
-
-
 class InterestViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.SuperOrReadOnly,)
-    pagination_class = StandardPagination
 
     queryset = models.Interest.objects.all().order_by("name")
 
@@ -33,7 +25,6 @@ class InterestViewSet(viewsets.ModelViewSet):
 
 class ActivityViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.SuperOrReadOnly,)
-    pagination_class = StandardPagination
 
     queryset = models.Activity.objects.all().order_by("name")
 
@@ -41,7 +32,6 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
 class TimePlaceViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedCreateOrSuperOrAuthor,)
-    pagination_class = StandardPagination
 
     queryset = (
         models.TimePlace.objects.all()
@@ -157,7 +147,6 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
         parameters=[OpenApiParameter("timeplace_pk",
                     OpenApiTypes.INT,
                     OpenApiParameter.PATH),],
-        description="Create a new match object for two timeplaces.",
         responses={
             200: inline_serializer(
                 name='get_match_response',
@@ -191,7 +180,6 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
         parameters=[OpenApiParameter("timeplace_pk",
                     OpenApiTypes.INT,
                     OpenApiParameter.PATH),],
-        description="Create a new match object for two timeplaces.",
         request=None,
         responses={
             201: inline_serializer(
