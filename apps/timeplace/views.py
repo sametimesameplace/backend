@@ -1,24 +1,22 @@
 from datetime import datetime, timezone
 from decimal import Decimal
 
+from django.db.models import Q
 from rest_framework import viewsets
+from rest_framework import status
+from rest_framework import serializers as drf_serializers
 from rest_framework.response import Response
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import action
 from geopy.distance import distance
+from drf_spectacular.utils import extend_schema, inline_serializer
+from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, OpenApiResponse
 
+from apps.match.models import Match
 from . import models, permissions, serializers
-
-
-class StandardPagination(PageNumberPagination):
-    page_size = 20
-    page_size_query_param = "page_size"
-    max_page_size = 100
 
 
 class InterestViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.SuperOrReadOnly,)
-    pagination_class = StandardPagination
 
     queryset = models.Interest.objects.all().order_by("name")
 
@@ -27,16 +25,13 @@ class InterestViewSet(viewsets.ModelViewSet):
 
 class ActivityViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.SuperOrReadOnly,)
-    pagination_class = StandardPagination
 
     queryset = models.Activity.objects.all().order_by("name")
 
     serializer_class = serializers.ActivityModelSerializer
 
-
 class TimePlaceViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedCreateOrSuperOrAuthor,)
-    pagination_class = StandardPagination
 
     queryset = (
         models.TimePlace.objects.all()
@@ -147,3 +142,81 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
 
         serializer = serializers.TimePlaceMatchSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    @extend_schema(
+        parameters=[OpenApiParameter("timeplace_pk",
+                    OpenApiTypes.INT,
+                    OpenApiParameter.PATH),],
+        responses={
+            200: inline_serializer(
+                name='get_match_response',
+                fields={
+                    'match_id': drf_serializers.IntegerField(),
+                }
+            )
+            }
+        )
+    @action(detail=True, methods=["GET"], url_path="match/(?P<timeplace_pk>[^/.]+)")
+    def get_match(self, request, timeplace_pk: int, pk=None):
+        """Check if there is an existing match object between two timeplaces.
+        """
+        
+        own_tp = self.get_object().id
+        other_tp = timeplace_pk
+
+        queryset = Match.objects.filter(
+            (Q(timeplace_1_id=own_tp) | Q(timeplace_1_id=other_tp)) &
+            (Q(timeplace_2_id=own_tp) | Q(timeplace_2_id=other_tp))
+        )
+
+        if queryset:
+            return Response(
+                {"match_id": queryset[0].id},
+                status=status.HTTP_200_OK
+                )
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    @extend_schema(
+        parameters=[OpenApiParameter("timeplace_pk",
+                    OpenApiTypes.INT,
+                    OpenApiParameter.PATH),],
+        request=None,
+        responses={
+            201: inline_serializer(
+                name='create_match_response',
+                fields={
+                    'match_id': drf_serializers.IntegerField(),
+                }
+            ), 
+            403: OpenApiResponse(description='Match already exists'),
+            }
+        )
+    @get_match.mapping.post
+    def create_match(self, request, timeplace_pk: int, pk=None):
+        """Create a new match object for two timeplaces.
+        """
+        own_tp = self.get_object()
+        other_tp = models.TimePlace.objects.get(pk=timeplace_pk)
+
+        # Check if a match between the two timeplaces already exists
+        queryset = Match.objects.filter(
+            (Q(timeplace_1=own_tp) | Q(timeplace_1=other_tp)) &
+            (Q(timeplace_2=own_tp) | Q(timeplace_2=other_tp))
+        )
+
+        if queryset:
+            return Response(
+                {"error": "Match already exists",
+                "match_id": queryset[0].id},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        # Create a new match object and return the ID
+        match_obj = Match.objects.create(
+            timeplace_1=own_tp,
+            timeplace_2=other_tp
+        )
+        return Response(
+            {"match_id": match_obj.id},
+            status=status.HTTP_201_CREATED
+        )

@@ -34,10 +34,22 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK['DEFAULT_SCHEMA_CLASS'] = 'drf_spectacular.openapi.AutoSchema'
+REST_FRAMEWORK['DEFAULT_PAGINATION_CLASS'] = 'rest_framework.pagination.PageNumberPagination'
+REST_FRAMEWORK['PAGE_SIZE'] = 50
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'SameTimeSamePlace API',
     'DESCRIPTION': 'Find friends for an adventure.',
     'VERSION': '0.1.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    # Split components into request and response parts where appropriate
+    'COMPONENT_SPLIT_REQUEST': True,
+    # Aid client generator targets that have trouble with read-only properties.
+    'COMPONENT_NO_READ_ONLY_REQUIRED': False,
+    # Create separate components for PATCH endpoints (without required list)
+    'COMPONENT_SPLIT_PATCH': True,
+    # Optional list of servers.
+    # Each entry MUST contain "url", MAY contain "description", "variables"
+    # e.g. [{'url': 'https://example.com/v1', 'description': 'Text'}, ...]
+    'SERVERS': [{'url': 'http://localhost:8000/', 'description': 'Local Dev Server'},],
 }

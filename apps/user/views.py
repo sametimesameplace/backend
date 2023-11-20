@@ -63,13 +63,14 @@ class ListUsers(viewsets.ModelViewSet):
         If user is admin, let them see all.
         """
         if self.request.user.is_staff:
-            return User.objects.all()
+            return User.objects.all().order_by("username")
         else:
+            self.pagination_class = None
             return User.objects.filter(id=self.request.user.id)
 
 
 class UserProfileModelViewSet(viewsets.ModelViewSet):
-    queryset = UserProfile.objects.all()
+    queryset = UserProfile.objects.all().order_by("user")
     permission_classes = (
         IsAuthenticatedCreateOrSuperOrAuthor,
     )
@@ -92,6 +93,7 @@ class UserProfileModelViewSet(viewsets.ModelViewSet):
         """
         if self.request.user.is_superuser:
             return self.queryset
+        self.pagination_class = None
         return self.queryset.filter(user_id=self.request.user)
 
 
@@ -116,9 +118,11 @@ class UserLanguageViewSet(viewsets.ModelViewSet):
         If user is admin, let them see all.
         """
         if self.request.user.is_superuser:
-            return UserLanguage.objects.all()
+            return UserLanguage.objects.all().order_by("userprofile")
         else:
-            return UserLanguage.objects.filter(userprofile__user=self.request.user)
+            return (UserLanguage.objects
+                    .filter(userprofile__user=self.request.user)
+                    .order_by("language"))
 
 
 class LanguageViewSet(viewsets.ModelViewSet):
