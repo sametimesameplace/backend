@@ -94,7 +94,8 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
         if not main_tp.activities.all().intersection(check_tp.activities.all()):
             return False
         return True
-
+    
+    @extend_schema(responses=serializers.TimePlaceMatchSerializer(many=True))
     @action(detail=True, methods=["GET"], url_path="matches")
     def matches(self, request, *args, **kwargs):
         """View all potential matches of a Timeplace

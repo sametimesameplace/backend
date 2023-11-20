@@ -841,7 +841,7 @@ paths:
           description: Match already exists
   /api/v1/timeplace/{id}/matches/:
     get:
-      operationId: timeplace_matches_retrieve
+      operationId: timeplace_matches_list
       description: View all potential matches of a Timeplace
       parameters:
       - in: path
@@ -850,6 +850,12 @@ paths:
           type: integer
         description: A unique integer value identifying this time place.
         required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
       - timeplace
       security:
@@ -859,7 +865,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TimePlaceModelView'
+                $ref: '#/components/schemas/PaginatedTimePlaceMatchList'
           description: ''
   /api/v1/user/:
     get:
@@ -1509,6 +1515,26 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MatchModel'
+    PaginatedTimePlaceMatchList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimePlaceMatch'
     PaginatedTimePlaceModelViewList:
       type: object
       properties:
@@ -1737,6 +1763,32 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/UserLanguageModelRequest'
+    TimePlaceMatch:
+      type: object
+      description: Serializer to show the matches for a Timeplace
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+        description:
+          type: string
+          maxLength: 500
+        interests:
+          type: array
+          items:
+            type: integer
+        activities:
+          type: array
+          items:
+            type: integer
+      required:
+      - activities
+      - description
+      - id
+      - interests
+      - user
     TimePlaceModelCreateUpdate:
       type: object
       description: |-
