@@ -26,10 +26,11 @@ class MatchViewSet(
     serializer_class = serializers.MatchModelListRetrieveSerializer
 
     def get_queryset(self):
-        """Limit the queryset to the author, i.e the logged in user. Superusers can see all items."""
+        """Limit the queryset to the author, i.e the logged in user, 
+        and non-deleted items for fetching/updating data. Superusers can see all items."""
         if self.request.user.is_superuser:
             return models.Match.objects.all()
-        return models.Match.objects.filter(Q(timeplace_1__user=self.request.user) | Q(timeplace_2__user=self.request.user))
+        return models.Match.objects.extend(deleted=True).filter(Q(timeplace_1__user=self.request.user) | Q(timeplace_2__user=self.request.user))
     
     def perform_destroy(self, instance):
         """Don't delete the instance but rather set 'deleted' to true
