@@ -113,6 +113,8 @@ class TimePlaceModelAdminSerializer(serializers.ModelSerializer):
 class TimePlaceMatchSerializer(serializers.ModelSerializer):
     """Serializer to show the matches for a Timeplace
     """
+    interests = InterestModelSerializer(many=True)
+    activities = ActivityModelSerializer(many=True)
 
     class Meta:
         model = models.TimePlace
