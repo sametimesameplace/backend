@@ -19,18 +19,14 @@ class MatchViewSet(
                 mixins.ListModelMixin,
                 viewsets.GenericViewSet):
     """ 
-    API endpoint that allows users to be viewed or edited.
+    API endpoint that allows matches to be viewed or edited.
     """
     queryset = models.Match.objects.all()
     permission_classes = [permissions.SuperOrAuthors]
-    # serializer = UploadFilesSerializer(data=request.data, context={'request': request})
     serializer_class = serializers.MatchModelListRetrieveSerializer
 
     def get_queryset(self):
-        """Limit the queryset to the author, i.e the logged in user, 
-        and non-deleted items for fetching/updating data.
-        Superusers can see all items.
-        """
+        """Limit the queryset to the author, i.e the logged in user. Superusers can see all items."""
         if self.request.user.is_superuser:
             return models.Match.objects.all()
         return models.Match.objects.filter(Q(timeplace_1__user=self.request.user) | Q(timeplace_2__user=self.request.user))
