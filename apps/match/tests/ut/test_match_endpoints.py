@@ -174,7 +174,6 @@ class TestMatchEndpoints(APITestCase):
         self.assertEqual(response.data['foreign_phone'], 'Hidden')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
-    
     def test_foreign_user_email_is_hidden(self):
         url = reverse('match-detail', kwargs={'pk': self.user1.id})
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user2token.key)
