@@ -174,6 +174,17 @@ class TestMatchEndpoints(APITestCase):
         url = reverse('match-detail', kwargs={'pk': self.user1.id})
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user2token.key)
         response = self.client.get(url, data=data)
+        self.assertTrue(response.data, {"phone_user_1": "Hidden"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+    def test_foreign_user_phone_number_is_shown(self):
+        data = {
+            "phone_user_1": "12345678"
+        }
+        url = reverse('match-detail', kwargs={'pk': self.user1.id})
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user2token.key)
+        response = self.client.get(url, data=data)
+        self.assertTrue(response.data, {"phone_user_1": "12345678"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
     def test_foreign_user_email_is_hidden(self):
@@ -183,6 +194,16 @@ class TestMatchEndpoints(APITestCase):
         url = reverse('match-detail', kwargs={'pk': self.user1.id})
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user2token.key)
         response = self.client.get(url, data=data)
+        self.assertTrue(response.data, {"email_user_1": "Hidden"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+    def test_foreign_user_email_is_shown(self):
+        data = {
+            "email_user_1": "user1@example.com"}
+        url = reverse('match-detail', kwargs={'pk': self.user1.id})
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user2token.key)
+        response = self.client.get(url, data=data)
+        self.assertTrue(response.data, {"email_user_1": "user1@example.com"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
     def test_chat_accepted_for_users(self):
@@ -191,4 +212,14 @@ class TestMatchEndpoints(APITestCase):
         url = reverse('match-detail', kwargs={'pk': self.user1.id})
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user2token.key)
         response = self.client.get(url, data=data)
+        self.assertTrue(response.data, {"chat_accepted": True})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+    def test_chat_not_accepted_by_users(self):
+        data = {
+            "chat_accepted": False}
+        url = reverse('match-detail', kwargs={'pk': self.user1.id})
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user2token.key)
+        response = self.client.get(url, data=data)
+        self.assertTrue(response.data, {"chat_accepted": False})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
