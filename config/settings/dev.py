@@ -53,3 +53,5 @@ SPECTACULAR_SETTINGS = {
     # e.g. [{'url': 'https://example.com/v1', 'description': 'Text'}, ...]
     'SERVERS': [{'url': 'http://localhost:8000/', 'description': 'Local Dev Server'},],
 }
+
+CORS_ALLOW_ALL_ORIGINS = True
