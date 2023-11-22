@@ -100,17 +100,6 @@ class TestInterestEndpoints(APITestCase):
             level = "Fluent"
         )
 
-        # Create activities and interests
-        cls.interest1 = models.Interest.objects.create(name="Cars")
-        cls.interest2 = models.Interest.objects.create(name="Animals")
-        cls.interest3 = models.Interest.objects.create(name="Museums")
-        cls.interest4 = models.Interest.objects.create(name="Planes")
-
-        cls.activity1 = models.Activity.objects.create(name="Carneval")
-        cls.activity2 = models.Activity.objects.create(name="Airsoft")
-        cls.activity3 = models.Activity.objects.create(name="Football")
-        cls.activity4 = models.Activity.objects.create(name="Bars")
-
         # Create some timeplaces
         # For user1
         cls.user1_tp1 = models.TimePlace.objects.create(
@@ -122,8 +111,8 @@ class TestInterestEndpoints(APITestCase):
             radius=10,
             description="I want to run tests, this is user1_tp1",
         )
-        cls.user1_tp1.interests.add(cls.interest1.id, cls.interest2.id)
-        cls.user1_tp1.activities.add(cls.activity1.id, cls.activity2.id)
+        cls.user1_tp1.interests.add(1, 2)
+        cls.user1_tp1.activities.add(1, 2)
         
         cls.user1_tp2 = models.TimePlace.objects.create(
             user=cls.user1,
@@ -134,8 +123,8 @@ class TestInterestEndpoints(APITestCase):
             radius=5,
             description="I want to run tests, this is user1_tp2",
         )
-        cls.user1_tp2.interests.add(cls.interest1.id, cls.interest2.id)
-        cls.user1_tp2.activities.add(cls.activity1.id)
+        cls.user1_tp2.interests.add(1, 2)
+        cls.user1_tp2.activities.add(1)
         
         # For user2
         cls.user2_tp1 = models.TimePlace.objects.create(
@@ -147,8 +136,8 @@ class TestInterestEndpoints(APITestCase):
             radius=10,
             description="I want to run tests, this is user2_tp1",
         )
-        cls.user2_tp1.interests.add(cls.interest1.id, cls.interest2.id)
-        cls.user2_tp1.activities.add(cls.activity1.id)
+        cls.user2_tp1.interests.add(1, 2)
+        cls.user2_tp1.activities.add(1)
         
         cls.user2_tp2 = models.TimePlace.objects.create(
             user=cls.user2,
@@ -159,8 +148,8 @@ class TestInterestEndpoints(APITestCase):
             radius=10,
             description="I want to run tests, this is user2_tp2",
         )
-        cls.user2_tp2.interests.add(cls.interest3.id)
-        cls.user2_tp2.activities.add(cls.activity1.id, cls.activity2.id)
+        cls.user2_tp2.interests.add(3)
+        cls.user2_tp2.activities.add(1, 2)
 
         # For user3
         cls.user3_tp1 = models.TimePlace.objects.create(
@@ -172,8 +161,8 @@ class TestInterestEndpoints(APITestCase):
             radius=10,
             description="I want to run tests, this is user3_tp1",
         )
-        cls.user3_tp1.interests.add(cls.interest2.id, cls.interest3.id)
-        cls.user3_tp1.activities.add(cls.activity1.id)
+        cls.user3_tp1.interests.add(2, 3)
+        cls.user3_tp1.activities.add(1)
         
         cls.user3_tp2 = models.TimePlace.objects.create(
             user=cls.user3,
@@ -184,8 +173,8 @@ class TestInterestEndpoints(APITestCase):
             radius=10,
             description="I want to run tests, this is user3_tp2",
         )
-        cls.user3_tp2.interests.add(cls.interest3.id)
-        cls.user3_tp2.activities.add(cls.activity2.id)
+        cls.user3_tp2.interests.add(3)
+        cls.user3_tp2.activities.add(2)
 
     def test_user_can_get_own_matches(self):
         """Test if user can get matches for his own timeplaces.

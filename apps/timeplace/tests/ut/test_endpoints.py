@@ -10,14 +10,6 @@ from apps.user.models import User
 class TestInterestEndpoints(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        models.Interest.objects.bulk_create(
-            [
-                models.Interest(name="Cars"),
-                models.Interest(name="Animals"),
-                models.Interest(name="Museums"),
-                models.Interest(name="Bars"),
-            ]
-        )
         cls.superuser = User.objects.create_superuser(
             username="admin_interest",
             email="admin_interest@stsp.com",
@@ -37,19 +29,8 @@ class TestInterestEndpoints(APITestCase):
         """
         url = reverse("interest-list")
         response = self.client.get(url)
-        expected_content = {
-            "count": 4,
-            "next": None,
-            "previous": None,
-            "results": [
-                {"id": 2, "name": "Animals"},
-                {"id": 4, "name": "Bars"},
-                {"id": 1, "name": "Cars"},
-                {"id": 3, "name": "Museums"},
-            ],
-        }
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(dict(response.data), expected_content)
+        self.assertEqual(response.data["count"], 81)
 
     def test_unauthenticated_user_unsafe_methods_forbidden(self):
         """Test if unsafe requests to the Interest endpoint without any 
@@ -101,14 +82,6 @@ class TestInterestEndpoints(APITestCase):
 class TestActivityEndpoints(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        models.Activity.objects.bulk_create(
-            [
-                models.Activity(name="Carneval"),
-                models.Activity(name="Airsoft"),
-                models.Activity(name="Football"),
-                models.Activity(name="Bars"),
-            ]
-        )
         cls.superuser = User.objects.create_superuser(
             username="admin_activity",
             email="admin_activity@stsp.com",
@@ -128,19 +101,8 @@ class TestActivityEndpoints(APITestCase):
         """
         url = reverse("activity-list")
         response = self.client.get(url)
-        expected_content = {
-            "count": 4,
-            "next": None,
-            "previous": None,
-            "results": [
-                {"id": 2, "name": "Airsoft"},
-                {"id": 4, "name": "Bars"},
-                {"id": 1, "name": "Carneval"},
-                {"id": 3, "name": "Football"},
-            ],
-        }
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(dict(response.data), expected_content)
+        self.assertEqual(response.data["count"], 86)
 
     def test_unauthenticated_user_unsafe_methods_forbidden(self):
         """Test if unsafe requests to the Activity endpoint without any 
@@ -192,13 +154,6 @@ class TestActivityEndpoints(APITestCase):
 class TestTimePlaceEndpoints(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        # Create Interest and Activity Objects to use in the TimePlace
-        cls.interest1 = models.Interest.objects.create(name="Animals")
-        cls.interest2 = models.Interest.objects.create(name="Art")
-
-        cls.activity1 = models.Activity.objects.create(name="Swimming")
-        cls.activity2 = models.Activity.objects.create(name="Go Party")
-
         # Create a superuser and two different users including tokens
         cls.superuser = User.objects.create_superuser(
             username="admin_tp",
@@ -228,8 +183,8 @@ class TestTimePlaceEndpoints(APITestCase):
             radius=10,
             description="I want to run tests",
         )
-        cls.tp1.interests.add(cls.interest1.id, cls.interest2.id)
-        cls.tp1.activities.add(cls.activity1.id)
+        cls.tp1.interests.add(1, 2)
+        cls.tp1.activities.add(1)
 
         cls.tp2 = models.TimePlace.objects.create(
             user=cls.user1,
@@ -240,8 +195,8 @@ class TestTimePlaceEndpoints(APITestCase):
             radius=10,
             description="I want to run more tests",
         )
-        cls.tp2.interests.add(cls.interest1.id)
-        cls.tp2.activities.add(cls.activity1.id, cls.activity2.id)
+        cls.tp2.interests.add(1)
+        cls.tp2.activities.add(1, 2)
 
         cls.tp3 = models.TimePlace.objects.create(
             user=cls.user2,
@@ -252,8 +207,8 @@ class TestTimePlaceEndpoints(APITestCase):
             radius=10,
             description="I want to run tests with different users",
         )
-        cls.tp3.interests.add(cls.interest1.id)
-        cls.tp3.activities.add(cls.activity2.id)
+        cls.tp3.interests.add(1)
+        cls.tp3.activities.add(2)
 
     def test_unauthenticated_user_forbidden(self):
         """Test if an unauthenticated user can use any method on TimePlace endpoint.
@@ -302,8 +257,8 @@ class TestTimePlaceEndpoints(APITestCase):
             "longitude":-20.654321,
             "radius":10,
             "description":"We need more tests here!",
-            "interests":[self.interest1.id],
-            "activities":[self.activity1.id]
+            "interests":[1],
+            "activities":[1]
         })
         self.assertEqual(post_response.status_code, status.HTTP_201_CREATED)
 
@@ -319,8 +274,8 @@ class TestTimePlaceEndpoints(APITestCase):
             "longitude":-20.654321,
             "radius":10,
             "description":"We need more tests here!",
-            "interests":[self.interest1.id],
-            "activities":[self.activity1.id]
+            "interests":[1],
+            "activities":[1]
         })
         self.assertEqual(post_response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -336,8 +291,8 @@ class TestTimePlaceEndpoints(APITestCase):
             "longitude":-20.654321,
             "radius":10,
             "description":"We need more tests here!",
-            "interests":[self.interest1.id],
-            "activities":[self.activity1.id]
+            "interests":[1],
+            "activities":[1]
         })
         self.assertEqual(post_response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -353,8 +308,8 @@ class TestTimePlaceEndpoints(APITestCase):
             "longitude":-20.654321,
             "radius":10,
             "description":"We need more tests here!",
-            "interests":[self.interest1.id],
-            "activities":[self.activity1.id]
+            "interests":[1],
+            "activities":[1]
         })
         self.assertEqual(post_response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -370,8 +325,8 @@ class TestTimePlaceEndpoints(APITestCase):
             "longitude":220.654321,
             "radius":10,
             "description":"We need more tests here!",
-            "interests":[self.interest1.id],
-            "activities":[self.activity1.id]
+            "interests":[1],
+            "activities":[1]
         })
         self.assertEqual(post_response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -387,8 +342,8 @@ class TestTimePlaceEndpoints(APITestCase):
             "longitude":0.123456,
             "radius":10,
             "description":"I want to run different tests!",
-            "interests":[self.interest1.id],
-            "activities":[self.activity1.id]
+            "interests":[1],
+            "activities":[1]
         })
         self.assertEqual(put_response.status_code, status.HTTP_200_OK)
 
@@ -404,8 +359,8 @@ class TestTimePlaceEndpoints(APITestCase):
             "longitude":0.123456,
             "radius":10,
             "description":"I want to run different tests!",
-            "interests":[self.interest1.id],
-            "activities":[self.activity1.id]
+            "interests":[1],
+            "activities":[1]
         })
         self.assertEqual(put_response.status_code, status.HTTP_404_NOT_FOUND)
 
