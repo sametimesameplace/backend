@@ -6,7 +6,7 @@ info:
 paths:
   /api/v1/activity/:
     get:
-      operationId: api_v1_activity_list
+      operationId: activity_list
       parameters:
       - name: page
         required: false
@@ -15,7 +15,7 @@ paths:
         schema:
           type: integer
       tags:
-      - api
+      - activity
       security:
       - tokenAuth: []
       responses:
@@ -26,9 +26,9 @@ paths:
                 $ref: '#/components/schemas/PaginatedActivityModelList'
           description: ''
     post:
-      operationId: api_v1_activity_create
+      operationId: activity_create
       tags:
-      - api
+      - activity
       requestBody:
         content:
           application/json:
@@ -52,7 +52,7 @@ paths:
           description: ''
   /api/v1/activity/{id}/:
     get:
-      operationId: api_v1_activity_retrieve
+      operationId: activity_retrieve
       parameters:
       - in: path
         name: id
@@ -61,7 +61,7 @@ paths:
         description: A unique integer value identifying this activity.
         required: true
       tags:
-      - api
+      - activity
       security:
       - tokenAuth: []
       responses:
@@ -72,7 +72,7 @@ paths:
                 $ref: '#/components/schemas/ActivityModel'
           description: ''
     put:
-      operationId: api_v1_activity_update
+      operationId: activity_update
       parameters:
       - in: path
         name: id
@@ -81,7 +81,7 @@ paths:
         description: A unique integer value identifying this activity.
         required: true
       tags:
-      - api
+      - activity
       requestBody:
         content:
           application/json:
@@ -104,7 +104,7 @@ paths:
                 $ref: '#/components/schemas/ActivityModel'
           description: ''
     patch:
-      operationId: api_v1_activity_partial_update
+      operationId: activity_partial_update
       parameters:
       - in: path
         name: id
@@ -113,7 +113,7 @@ paths:
         description: A unique integer value identifying this activity.
         required: true
       tags:
-      - api
+      - activity
       requestBody:
         content:
           application/json:
@@ -135,7 +135,7 @@ paths:
                 $ref: '#/components/schemas/ActivityModel'
           description: ''
     delete:
-      operationId: api_v1_activity_destroy
+      operationId: activity_destroy
       parameters:
       - in: path
         name: id
@@ -144,7 +144,7 @@ paths:
         description: A unique integer value identifying this activity.
         required: true
       tags:
-      - api
+      - activity
       security:
       - tokenAuth: []
       responses:
@@ -152,7 +152,7 @@ paths:
           description: No response body
   /api/v1/interest/:
     get:
-      operationId: api_v1_interest_list
+      operationId: interest_list
       parameters:
       - name: page
         required: false
@@ -161,7 +161,7 @@ paths:
         schema:
           type: integer
       tags:
-      - api
+      - interest
       security:
       - tokenAuth: []
       responses:
@@ -172,9 +172,9 @@ paths:
                 $ref: '#/components/schemas/PaginatedInterestModelList'
           description: ''
     post:
-      operationId: api_v1_interest_create
+      operationId: interest_create
       tags:
-      - api
+      - interest
       requestBody:
         content:
           application/json:
@@ -198,7 +198,7 @@ paths:
           description: ''
   /api/v1/interest/{id}/:
     get:
-      operationId: api_v1_interest_retrieve
+      operationId: interest_retrieve
       parameters:
       - in: path
         name: id
@@ -207,7 +207,7 @@ paths:
         description: A unique integer value identifying this interest.
         required: true
       tags:
-      - api
+      - interest
       security:
       - tokenAuth: []
       responses:
@@ -218,7 +218,7 @@ paths:
                 $ref: '#/components/schemas/InterestModel'
           description: ''
     put:
-      operationId: api_v1_interest_update
+      operationId: interest_update
       parameters:
       - in: path
         name: id
@@ -227,7 +227,7 @@ paths:
         description: A unique integer value identifying this interest.
         required: true
       tags:
-      - api
+      - interest
       requestBody:
         content:
           application/json:
@@ -250,7 +250,7 @@ paths:
                 $ref: '#/components/schemas/InterestModel'
           description: ''
     patch:
-      operationId: api_v1_interest_partial_update
+      operationId: interest_partial_update
       parameters:
       - in: path
         name: id
@@ -259,7 +259,7 @@ paths:
         description: A unique integer value identifying this interest.
         required: true
       tags:
-      - api
+      - interest
       requestBody:
         content:
           application/json:
@@ -281,7 +281,7 @@ paths:
                 $ref: '#/components/schemas/InterestModel'
           description: ''
     delete:
-      operationId: api_v1_interest_destroy
+      operationId: interest_destroy
       parameters:
       - in: path
         name: id
@@ -290,7 +290,7 @@ paths:
         description: A unique integer value identifying this interest.
         required: true
       tags:
-      - api
+      - interest
       security:
       - tokenAuth: []
       responses:
@@ -298,7 +298,7 @@ paths:
           description: No response body
   /api/v1/language/:
     get:
-      operationId: api_v1_language_list
+      operationId: language_list
       parameters:
       - name: page
         required: false
@@ -307,7 +307,7 @@ paths:
         schema:
           type: integer
       tags:
-      - api
+      - language
       security:
       - tokenAuth: []
       responses:
@@ -318,9 +318,9 @@ paths:
                 $ref: '#/components/schemas/PaginatedLanguageModelList'
           description: ''
     post:
-      operationId: api_v1_language_create
+      operationId: language_create
       tags:
-      - api
+      - language
       requestBody:
         content:
           application/json:
@@ -344,7 +344,7 @@ paths:
           description: ''
   /api/v1/language/{id}/:
     get:
-      operationId: api_v1_language_retrieve
+      operationId: language_retrieve
       parameters:
       - in: path
         name: id
@@ -353,7 +353,7 @@ paths:
         description: A unique integer value identifying this language.
         required: true
       tags:
-      - api
+      - language
       security:
       - tokenAuth: []
       responses:
@@ -364,7 +364,7 @@ paths:
                 $ref: '#/components/schemas/LanguageModel'
           description: ''
     put:
-      operationId: api_v1_language_update
+      operationId: language_update
       parameters:
       - in: path
         name: id
@@ -373,7 +373,7 @@ paths:
         description: A unique integer value identifying this language.
         required: true
       tags:
-      - api
+      - language
       requestBody:
         content:
           application/json:
@@ -396,7 +396,7 @@ paths:
                 $ref: '#/components/schemas/LanguageModel'
           description: ''
     patch:
-      operationId: api_v1_language_partial_update
+      operationId: language_partial_update
       parameters:
       - in: path
         name: id
@@ -405,7 +405,7 @@ paths:
         description: A unique integer value identifying this language.
         required: true
       tags:
-      - api
+      - language
       requestBody:
         content:
           application/json:
@@ -427,7 +427,7 @@ paths:
                 $ref: '#/components/schemas/LanguageModel'
           description: ''
     delete:
-      operationId: api_v1_language_destroy
+      operationId: language_destroy
       parameters:
       - in: path
         name: id
@@ -436,7 +436,7 @@ paths:
         description: A unique integer value identifying this language.
         required: true
       tags:
-      - api
+      - language
       security:
       - tokenAuth: []
       responses:
@@ -444,11 +444,11 @@ paths:
           description: No response body
   /api/v1/login:
     post:
-      operationId: api_v1_login_create
+      operationId: login_create
       description: validating the incoming data, authenticating the user based on
         the provided credentials, and generating a token for the authenticated user.
       tags:
-      - api
+      - login
       requestBody:
         content:
           application/json:
@@ -473,7 +473,7 @@ paths:
           description: ''
   /api/v1/match/:
     get:
-      operationId: api_v1_match_list
+      operationId: match_list
       description: API endpoint that allows matches to be viewed or edited.
       parameters:
       - name: page
@@ -483,7 +483,7 @@ paths:
         schema:
           type: integer
       tags:
-      - api
+      - match
       security:
       - tokenAuth: []
       responses:
@@ -527,7 +527,7 @@ paths:
           description: ''
   /api/v1/match/{id}/:
     get:
-      operationId: api_v1_match_retrieve
+      operationId: match_retrieve
       description: API endpoint that allows matches to be viewed or edited.
       parameters:
       - in: path
@@ -537,7 +537,7 @@ paths:
         description: A unique integer value identifying this match.
         required: true
       tags:
-      - api
+      - match
       security:
       - tokenAuth: []
       responses:
@@ -576,7 +576,7 @@ paths:
                   summary: Example for a match object
           description: ''
     delete:
-      operationId: api_v1_match_destroy
+      operationId: match_destroy
       description: API endpoint that allows matches to be viewed or edited.
       parameters:
       - in: path
@@ -586,7 +586,7 @@ paths:
         description: A unique integer value identifying this match.
         required: true
       tags:
-      - api
+      - match
       security:
       - tokenAuth: []
       responses:
@@ -594,7 +594,7 @@ paths:
           description: No response body
   /api/v1/match/{id}/chat/:
     get:
-      operationId: api_v1_match_chat_retrieve
+      operationId: match_chat_retrieve
       description: API endpoint that allows matches to be viewed or edited.
       parameters:
       - in: path
@@ -604,7 +604,7 @@ paths:
         description: A unique integer value identifying this match.
         required: true
       tags:
-      - api
+      - match
       security:
       - tokenAuth: []
       responses:
@@ -644,7 +644,7 @@ paths:
           description: ''
   /api/v1/timeplace/:
     get:
-      operationId: api_v1_timeplace_list
+      operationId: timeplace_list
       parameters:
       - name: page
         required: false
@@ -653,7 +653,7 @@ paths:
         schema:
           type: integer
       tags:
-      - api
+      - timeplace
       security:
       - tokenAuth: []
       responses:
@@ -664,9 +664,9 @@ paths:
                 $ref: '#/components/schemas/PaginatedTimePlaceModelViewList'
           description: ''
     post:
-      operationId: api_v1_timeplace_create
+      operationId: timeplace_create
       tags:
-      - api
+      - timeplace
       requestBody:
         content:
           application/json:
@@ -690,7 +690,7 @@ paths:
           description: ''
   /api/v1/timeplace/{id}/:
     get:
-      operationId: api_v1_timeplace_retrieve
+      operationId: timeplace_retrieve
       parameters:
       - in: path
         name: id
@@ -699,7 +699,7 @@ paths:
         description: A unique integer value identifying this time place.
         required: true
       tags:
-      - api
+      - timeplace
       security:
       - tokenAuth: []
       responses:
@@ -710,7 +710,7 @@ paths:
                 $ref: '#/components/schemas/TimePlaceModelView'
           description: ''
     put:
-      operationId: api_v1_timeplace_update
+      operationId: timeplace_update
       parameters:
       - in: path
         name: id
@@ -719,7 +719,7 @@ paths:
         description: A unique integer value identifying this time place.
         required: true
       tags:
-      - api
+      - timeplace
       requestBody:
         content:
           application/json:
@@ -742,7 +742,7 @@ paths:
                 $ref: '#/components/schemas/TimePlaceModelCreateUpdate'
           description: ''
     patch:
-      operationId: api_v1_timeplace_partial_update
+      operationId: timeplace_partial_update
       parameters:
       - in: path
         name: id
@@ -751,7 +751,7 @@ paths:
         description: A unique integer value identifying this time place.
         required: true
       tags:
-      - api
+      - timeplace
       requestBody:
         content:
           application/json:
@@ -773,7 +773,7 @@ paths:
                 $ref: '#/components/schemas/TimePlaceModelView'
           description: ''
     delete:
-      operationId: api_v1_timeplace_destroy
+      operationId: timeplace_destroy
       parameters:
       - in: path
         name: id
@@ -782,7 +782,7 @@ paths:
         description: A unique integer value identifying this time place.
         required: true
       tags:
-      - api
+      - timeplace
       security:
       - tokenAuth: []
       responses:
@@ -790,7 +790,7 @@ paths:
           description: No response body
   /api/v1/timeplace/{id}/match/{timeplace_pk}/:
     get:
-      operationId: api_v1_timeplace_match_retrieve
+      operationId: timeplace_match_retrieve
       description: Check if there is an existing match object between two timeplaces.
       parameters:
       - in: path
@@ -805,7 +805,7 @@ paths:
           type: integer
         required: true
       tags:
-      - api
+      - timeplace
       security:
       - tokenAuth: []
       responses:
@@ -816,7 +816,7 @@ paths:
                 $ref: '#/components/schemas/get_match_response'
           description: ''
     post:
-      operationId: api_v1_timeplace_match_create
+      operationId: timeplace_match_create
       description: Create a new match object for two timeplaces.
       parameters:
       - in: path
@@ -831,7 +831,7 @@ paths:
           type: integer
         required: true
       tags:
-      - api
+      - timeplace
       security:
       - tokenAuth: []
       responses:
@@ -845,7 +845,7 @@ paths:
           description: Match already exists
   /api/v1/timeplace/{id}/matches/:
     get:
-      operationId: api_v1_timeplace_matches_list
+      operationId: timeplace_matches_list
       description: View all potential matches of a Timeplace
       parameters:
       - in: path
@@ -861,7 +861,7 @@ paths:
         schema:
           type: integer
       tags:
-      - api
+      - timeplace
       security:
       - tokenAuth: []
       responses:
@@ -873,7 +873,7 @@ paths:
           description: ''
   /api/v1/user/:
     get:
-      operationId: api_v1_user_list
+      operationId: user_list
       parameters:
       - name: page
         required: false
@@ -882,7 +882,7 @@ paths:
         schema:
           type: integer
       tags:
-      - api
+      - user
       security:
       - tokenAuth: []
       responses:
@@ -893,9 +893,9 @@ paths:
                 $ref: '#/components/schemas/PaginatedUserModelList'
           description: ''
     post:
-      operationId: api_v1_user_create
+      operationId: user_create
       tags:
-      - api
+      - user
       requestBody:
         content:
           application/json:
@@ -920,7 +920,7 @@ paths:
           description: ''
   /api/v1/user/{id}/:
     get:
-      operationId: api_v1_user_retrieve
+      operationId: user_retrieve
       parameters:
       - in: path
         name: id
@@ -929,7 +929,7 @@ paths:
         description: A unique integer value identifying this user.
         required: true
       tags:
-      - api
+      - user
       security:
       - tokenAuth: []
       responses:
@@ -940,7 +940,7 @@ paths:
                 $ref: '#/components/schemas/UserModel'
           description: ''
     put:
-      operationId: api_v1_user_update
+      operationId: user_update
       parameters:
       - in: path
         name: id
@@ -949,7 +949,7 @@ paths:
         description: A unique integer value identifying this user.
         required: true
       tags:
-      - api
+      - user
       requestBody:
         content:
           application/json:
@@ -972,7 +972,7 @@ paths:
                 $ref: '#/components/schemas/UserModel'
           description: ''
     patch:
-      operationId: api_v1_user_partial_update
+      operationId: user_partial_update
       parameters:
       - in: path
         name: id
@@ -981,7 +981,7 @@ paths:
         description: A unique integer value identifying this user.
         required: true
       tags:
-      - api
+      - user
       requestBody:
         content:
           application/json:
@@ -1003,7 +1003,7 @@ paths:
                 $ref: '#/components/schemas/UserModel'
           description: ''
     delete:
-      operationId: api_v1_user_destroy
+      operationId: user_destroy
       parameters:
       - in: path
         name: id
@@ -1012,7 +1012,7 @@ paths:
         description: A unique integer value identifying this user.
         required: true
       tags:
-      - api
+      - user
       security:
       - tokenAuth: []
       responses:
@@ -1020,7 +1020,7 @@ paths:
           description: No response body
   /api/v1/userlanguage/:
     get:
-      operationId: api_v1_userlanguage_list
+      operationId: userlanguage_list
       parameters:
       - name: page
         required: false
@@ -1029,7 +1029,7 @@ paths:
         schema:
           type: integer
       tags:
-      - api
+      - userlanguage
       security:
       - tokenAuth: []
       responses:
@@ -1040,9 +1040,9 @@ paths:
                 $ref: '#/components/schemas/PaginatedUserLanguageModelList'
           description: ''
     post:
-      operationId: api_v1_userlanguage_create
+      operationId: userlanguage_create
       tags:
-      - api
+      - userlanguage
       requestBody:
         content:
           application/json:
@@ -1066,7 +1066,7 @@ paths:
           description: ''
   /api/v1/userlanguage/{id}/:
     get:
-      operationId: api_v1_userlanguage_retrieve
+      operationId: userlanguage_retrieve
       parameters:
       - in: path
         name: id
@@ -1075,7 +1075,7 @@ paths:
         description: A unique integer value identifying this user language.
         required: true
       tags:
-      - api
+      - userlanguage
       security:
       - tokenAuth: []
       responses:
@@ -1086,7 +1086,7 @@ paths:
                 $ref: '#/components/schemas/UserLanguageModel'
           description: ''
     put:
-      operationId: api_v1_userlanguage_update
+      operationId: userlanguage_update
       parameters:
       - in: path
         name: id
@@ -1095,7 +1095,7 @@ paths:
         description: A unique integer value identifying this user language.
         required: true
       tags:
-      - api
+      - userlanguage
       requestBody:
         content:
           application/json:
@@ -1118,7 +1118,7 @@ paths:
                 $ref: '#/components/schemas/UserLanguageCreateUpdate'
           description: ''
     patch:
-      operationId: api_v1_userlanguage_partial_update
+      operationId: userlanguage_partial_update
       parameters:
       - in: path
         name: id
@@ -1127,7 +1127,7 @@ paths:
         description: A unique integer value identifying this user language.
         required: true
       tags:
-      - api
+      - userlanguage
       requestBody:
         content:
           application/json:
@@ -1149,7 +1149,7 @@ paths:
                 $ref: '#/components/schemas/UserLanguageModel'
           description: ''
     delete:
-      operationId: api_v1_userlanguage_destroy
+      operationId: userlanguage_destroy
       parameters:
       - in: path
         name: id
@@ -1158,7 +1158,7 @@ paths:
         description: A unique integer value identifying this user language.
         required: true
       tags:
-      - api
+      - userlanguage
       security:
       - tokenAuth: []
       responses:
@@ -1166,7 +1166,7 @@ paths:
           description: No response body
   /api/v1/userprofile/:
     get:
-      operationId: api_v1_userprofile_list
+      operationId: userprofile_list
       parameters:
       - name: page
         required: false
@@ -1175,7 +1175,7 @@ paths:
         schema:
           type: integer
       tags:
-      - api
+      - userprofile
       security:
       - tokenAuth: []
       responses:
@@ -1186,9 +1186,9 @@ paths:
                 $ref: '#/components/schemas/PaginatedUserProfileModelList'
           description: ''
     post:
-      operationId: api_v1_userprofile_create
+      operationId: userprofile_create
       tags:
-      - api
+      - userprofile
       requestBody:
         content:
           application/json:
@@ -1212,7 +1212,7 @@ paths:
           description: ''
   /api/v1/userprofile/{id}/:
     get:
-      operationId: api_v1_userprofile_retrieve
+      operationId: userprofile_retrieve
       parameters:
       - in: path
         name: id
@@ -1221,7 +1221,7 @@ paths:
         description: A unique integer value identifying this user profile.
         required: true
       tags:
-      - api
+      - userprofile
       security:
       - tokenAuth: []
       responses:
@@ -1232,7 +1232,7 @@ paths:
                 $ref: '#/components/schemas/UserProfileModel'
           description: ''
     put:
-      operationId: api_v1_userprofile_update
+      operationId: userprofile_update
       parameters:
       - in: path
         name: id
@@ -1241,7 +1241,7 @@ paths:
         description: A unique integer value identifying this user profile.
         required: true
       tags:
-      - api
+      - userprofile
       requestBody:
         content:
           application/json:
@@ -1264,7 +1264,7 @@ paths:
                 $ref: '#/components/schemas/UserProfileUpdate'
           description: ''
     patch:
-      operationId: api_v1_userprofile_partial_update
+      operationId: userprofile_partial_update
       parameters:
       - in: path
         name: id
@@ -1273,7 +1273,7 @@ paths:
         description: A unique integer value identifying this user profile.
         required: true
       tags:
-      - api
+      - userprofile
       requestBody:
         content:
           application/json:
@@ -1295,7 +1295,7 @@ paths:
                 $ref: '#/components/schemas/UserProfileModel'
           description: ''
     delete:
-      operationId: api_v1_userprofile_destroy
+      operationId: userprofile_destroy
       parameters:
       - in: path
         name: id
@@ -1304,7 +1304,7 @@ paths:
         description: A unique integer value identifying this user profile.
         required: true
       tags:
-      - api
+      - userprofile
       security:
       - tokenAuth: []
       responses:
