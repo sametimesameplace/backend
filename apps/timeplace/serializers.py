@@ -20,8 +20,10 @@ class ActivityModelSerializer(serializers.ModelSerializer):
 
 
 class TimePlaceModelCreateSerializer(serializers.ModelSerializer):
-    """Serializer for the TimePlace model that takes interests and
-    activities as a list of integers and does not include the user
+    """Serializer to create a TimePlace model instance that takes interests 
+    and activities as a list of integers and does not include the user.
+    Automatically fills the city field with the nearest city to the given
+    coordinates in a radius of 100 miles.
     """
     class Meta:
         model = models.TimePlace
@@ -66,8 +68,8 @@ class TimePlaceModelCreateSerializer(serializers.ModelSerializer):
 
 
 class TimePlaceModelUpdateSerializer(serializers.ModelSerializer):
-    """Serializer for the TimePlace model that takes interests and
-    activities as a list of integers and does not include the user
+    """Serializer to update a TimePlace model instance that takes interests 
+    and activities as a list of integers and does not include the user.
     """
     class Meta:
         model = models.TimePlace
