@@ -50,6 +50,6 @@ def get_nearest_city(lat: float, long: float) -> str:
     try:
         city = data["data"][0]["city"]
     except:
-        city = "Error fetching city."
+        city = None
         
     return city

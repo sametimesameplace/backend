@@ -3,6 +3,7 @@ import pytz
 from rest_framework import serializers
 
 from apps.user.serializers import UserModelSerializer
+from apps.core.utils import get_nearest_city
 from . import models
 
 
@@ -18,7 +19,7 @@ class ActivityModelSerializer(serializers.ModelSerializer):
         fields = ["id","name"]
 
 
-class TimePlaceModelCreateUpdateSerializer(serializers.ModelSerializer):
+class TimePlaceModelCreateSerializer(serializers.ModelSerializer):
     """Serializer for the TimePlace model that takes interests and
     activities as a list of integers and does not include the user
     """
@@ -40,7 +41,7 @@ class TimePlaceModelCreateUpdateSerializer(serializers.ModelSerializer):
         # We need to have all datetimes in the same timezone
         start_tz = attrs["start"].replace(tzinfo=pytz.UTC)
         end_tz = attrs["end"].replace(tzinfo=pytz.UTC)
-        
+
         if start_tz < datetime.now(timezone.utc):
             raise serializers.ValidationError(
                 "Start date has to be in the future.")
@@ -53,6 +54,44 @@ class TimePlaceModelCreateUpdateSerializer(serializers.ModelSerializer):
         if attrs["longitude"] > 180 or attrs["longitude"] < -180:
             raise serializers.ValidationError(
                 "Longitude has to be between +180° and -180°.")
+        if attrs["radius"] > 50:
+            raise serializers.ValidationError(
+                "Radius can be 50km at most.")
+        return attrs
+
+    def create(self, validated_data):
+        validated_data['city'] = get_nearest_city(
+            validated_data['latitude'], validated_data['longitude'])
+        return super(TimePlaceModelCreateSerializer, self).create(validated_data)
+
+
+class TimePlaceModelUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for the TimePlace model that takes interests and
+    activities as a list of integers and does not include the user
+    """
+    class Meta:
+        model = models.TimePlace
+        fields = [
+            "id",
+            "start",
+            "end",
+            "radius",
+            "description",
+            "interests",
+            "activities"
+        ]
+
+    def validate(self, attrs):
+        # We need to have all datetimes in the same timezone
+        start_tz = attrs["start"].replace(tzinfo=pytz.UTC)
+        end_tz = attrs["end"].replace(tzinfo=pytz.UTC)
+        
+        if start_tz < datetime.now(timezone.utc):
+            raise serializers.ValidationError(
+                "Start date has to be in the future.")
+        if end_tz <= start_tz:
+            raise serializers.ValidationError(
+                "End date has to be after start date.")
         if attrs["radius"] > 50:
             raise serializers.ValidationError(
                 "Radius can be 50km at most.")
@@ -76,6 +115,7 @@ class TimePlaceModelViewSerializer(serializers.ModelSerializer):
             "end",
             "latitude",
             "longitude",
+            "city",
             "radius",
             "description",
             "interests",
@@ -101,6 +141,7 @@ class TimePlaceModelAdminSerializer(serializers.ModelSerializer):
             "end",
             "latitude",
             "longitude",
+            "city",
             "radius",
             "description",
             "interests",
