@@ -30,7 +30,7 @@ def get_nearest_city(lat: float, long: float) -> str:
 
     RAPID_API = env.str("RAPID_API")
 
-    conn = client.HTTPSConnection("wft-geo-db.p.rapidapi.com")
+    conn = client.HTTPSConnection("wft-geo-db.p.rapidapi.com", timeout=2)
     
     # https://rapidapi.com/blog/how-to-use-geodb-cities-api/
     url = ("/v1/geo/locations/"
