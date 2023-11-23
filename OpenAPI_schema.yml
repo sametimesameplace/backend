@@ -474,6 +474,7 @@ paths:
   /api/v1/match/:
     get:
       operationId: match_list
+      description: API endpoint that allows matches to be viewed or edited.
       parameters:
       - name: page
         required: false
@@ -490,36 +491,44 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedMatchModelList'
-          description: ''
-    post:
-      operationId: match_create
-      tags:
-      - match
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MatchModelRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/MatchModelRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/MatchModelRequest'
-        required: true
-      security:
-      - tokenAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MatchModel'
+                $ref: '#/components/schemas/PaginatedMatchModelListRetrieveList'
+              examples:
+                ExampleForAMatchObject:
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 1
+                      own_timeplace:
+                        id: 13
+                        user: 3
+                        description: Want to go to the Train Museum
+                        interests:
+                        - id: 2
+                          name: Trains
+                        activities:
+                        - id: 1
+                          name: Visiting a Museum
+                      foreign_timeplace:
+                        id: 2
+                        user: 2
+                        description: Want to visit some kind of Museum
+                        interests:
+                        - id: 2
+                          name: Trains
+                        activities:
+                        - id: 1
+                          name: Visiting a Museum
+                      foreign_email: Hidden
+                      foreign_phone: Hidden
+                      chat_accepted: false
+                  summary: Example for a match object
           description: ''
   /api/v1/match/{id}/:
     get:
       operationId: match_retrieve
+      description: API endpoint that allows matches to be viewed or edited.
       parameters:
       - in: path
         name: id
@@ -536,73 +545,39 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MatchModel'
-          description: ''
-    put:
-      operationId: match_update
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this match.
-        required: true
-      tags:
-      - match
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MatchModelRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/MatchModelRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/MatchModelRequest'
-        required: true
-      security:
-      - tokenAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MatchModel'
-          description: ''
-    patch:
-      operationId: match_partial_update
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this match.
-        required: true
-      tags:
-      - match
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedMatchModelRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedMatchModelRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedMatchModelRequest'
-      security:
-      - tokenAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MatchModel'
+                $ref: '#/components/schemas/MatchModelListRetrieve'
+              examples:
+                ExampleForAMatchObject:
+                  value:
+                    id: 1
+                    own_timeplace:
+                      id: 13
+                      user: 3
+                      description: Want to go to the Train Museum
+                      interests:
+                      - id: 2
+                        name: Trains
+                      activities:
+                      - id: 1
+                        name: Visiting a Museum
+                    foreign_timeplace:
+                      id: 2
+                      user: 2
+                      description: Want to visit some kind of Museum
+                      interests:
+                      - id: 2
+                        name: Trains
+                      activities:
+                      - id: 1
+                        name: Visiting a Museum
+                    foreign_email: Hidden
+                    foreign_phone: Hidden
+                    chat_accepted: false
+                  summary: Example for a match object
           description: ''
     delete:
       operationId: match_destroy
+      description: API endpoint that allows matches to be viewed or edited.
       parameters:
       - in: path
         name: id
@@ -620,6 +595,7 @@ paths:
   /api/v1/match/{id}/chat/:
     get:
       operationId: match_chat_retrieve
+      description: API endpoint that allows matches to be viewed or edited.
       parameters:
       - in: path
         name: id
@@ -636,7 +612,35 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MatchModel'
+                $ref: '#/components/schemas/MatchModelListRetrieve'
+              examples:
+                ExampleForAMatchObject:
+                  value:
+                    id: 1
+                    own_timeplace:
+                      id: 13
+                      user: 3
+                      description: Want to go to the Train Museum
+                      interests:
+                      - id: 2
+                        name: Trains
+                      activities:
+                      - id: 1
+                        name: Visiting a Museum
+                    foreign_timeplace:
+                      id: 2
+                      user: 2
+                      description: Want to visit some kind of Museum
+                      interests:
+                      - id: 2
+                        name: Trains
+                      activities:
+                      - id: 1
+                        name: Visiting a Museum
+                    foreign_email: Hidden
+                    foreign_phone: Hidden
+                    chat_accepted: false
+                  summary: Example for a match object
           description: ''
   /api/v1/timeplace/:
     get:
@@ -1391,50 +1395,40 @@ components:
         * `Learning` - Learning
         * `Fluent` - Fluent
         * `Preferred` - Preferred
-    MatchModel:
+    MatchModelListRetrieve:
       type: object
+      description: Serializer for listing and retrieving matches
       properties:
         id:
           type: integer
           readOnly: true
-        timeplace_1:
-          type: integer
-        timeplace_2:
-          type: integer
-        email_user_1:
-          type: boolean
-        email_user_2:
-          type: boolean
-        phone_user_1:
-          type: boolean
-        phone_user_2:
-          type: boolean
+        own_timeplace:
+          type: object
+          additionalProperties: {}
+          description: Returns the users own timeplace
+          readOnly: true
+        foreign_timeplace:
+          type: object
+          additionalProperties: {}
+          description: Returns the timeplace of the matched user
+          readOnly: true
+        foreign_email:
+          type: string
+          format: email
+          description: Returns the email of the matched user
+          readOnly: true
+        foreign_phone:
+          type: string
+          description: Returns the phone number of the matched user
+          readOnly: true
         chat_accepted:
           type: boolean
       required:
+      - foreign_email
+      - foreign_phone
+      - foreign_timeplace
       - id
-      - timeplace_1
-      - timeplace_2
-    MatchModelRequest:
-      type: object
-      properties:
-        timeplace_1:
-          type: integer
-        timeplace_2:
-          type: integer
-        email_user_1:
-          type: boolean
-        email_user_2:
-          type: boolean
-        phone_user_1:
-          type: boolean
-        phone_user_2:
-          type: boolean
-        chat_accepted:
-          type: boolean
-      required:
-      - timeplace_1
-      - timeplace_2
+      - own_timeplace
     PaginatedActivityModelList:
       type: object
       properties:
@@ -1495,7 +1489,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/LanguageModel'
-    PaginatedMatchModelList:
+    PaginatedMatchModelListRetrieveList:
       type: object
       properties:
         count:
@@ -1514,7 +1508,7 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/MatchModel'
+            $ref: '#/components/schemas/MatchModelListRetrieve'
     PaginatedTimePlaceMatchList:
       type: object
       properties:
@@ -1636,23 +1630,6 @@ components:
           type: string
           minLength: 1
           maxLength: 255
-    PatchedMatchModelRequest:
-      type: object
-      properties:
-        timeplace_1:
-          type: integer
-        timeplace_2:
-          type: integer
-        email_user_1:
-          type: boolean
-        email_user_2:
-          type: boolean
-        phone_user_1:
-          type: boolean
-        phone_user_2:
-          type: boolean
-        chat_accepted:
-          type: boolean
     PatchedTimePlaceModelViewRequest:
       type: object
       description: |-
@@ -1778,11 +1755,11 @@ components:
         interests:
           type: array
           items:
-            type: integer
+            $ref: '#/components/schemas/InterestModel'
         activities:
           type: array
           items:
-            type: integer
+            $ref: '#/components/schemas/ActivityModel'
       required:
       - activities
       - description
