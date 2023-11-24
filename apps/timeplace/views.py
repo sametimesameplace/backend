@@ -170,6 +170,7 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
         queryset = Match.objects.filter(
             (Q(timeplace_1_id=own_tp) | Q(timeplace_1_id=other_tp)) &
             (Q(timeplace_2_id=own_tp) | Q(timeplace_2_id=other_tp))
+            .order_by("-created_at")
         )
 
         if queryset:
