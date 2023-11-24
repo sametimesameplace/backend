@@ -3,6 +3,8 @@ import json
 from http import client
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
+
 
 class MetaSingleton(type):
     """Metaclass to create singleton classes.
@@ -28,7 +30,10 @@ def get_nearest_city(lat: float, long: float) -> str:
     env = environ.Env()
     environ.Env.read_env(str(BASE_DIR / ".env"))
 
-    RAPID_API = env.str("RAPID_API")
+    try:
+        RAPID_API = env.str("RAPID_API")
+    except ImproperlyConfigured:
+        RAPID_API = "no_key_found"
 
     conn = client.HTTPSConnection("wft-geo-db.p.rapidapi.com", timeout=2)
     
