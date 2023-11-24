@@ -8,7 +8,7 @@ from rest_framework import serializers as drf_serializers
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from geopy.distance import distance
-from drf_spectacular.utils import extend_schema, inline_serializer
+from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, OpenApiResponse
 
 from apps.match.models import Match
@@ -30,6 +30,15 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
     serializer_class = serializers.ActivityModelSerializer
 
+
+@extend_schema_view(
+    create=extend_schema(
+        description="""Create a new TimePlace.
+        Latitude and Longitude are numbers with up to six decimal places.
+        Latitude needs to be between -90 and 90.
+        Longitude needs to be between -180 and 180.""",
+        request=serializers.TimePlaceModelCreateSerializer,
+        responses={201: serializers.TimePlaceModelViewSerializer}))
 class TimePlaceViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedCreateOrSuperOrAuthor,)
 

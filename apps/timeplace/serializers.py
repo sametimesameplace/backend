@@ -66,6 +66,9 @@ class TimePlaceModelCreateSerializer(serializers.ModelSerializer):
             validated_data['latitude'], validated_data['longitude'])
         return super(TimePlaceModelCreateSerializer, self).create(validated_data)
 
+    def to_representation(self, instance):
+        return (TimePlaceModelViewSerializer(context=self.context)
+                .to_representation(instance))
 
 class TimePlaceModelUpdateSerializer(serializers.ModelSerializer):
     """Serializer to update a TimePlace model instance that takes interests 
