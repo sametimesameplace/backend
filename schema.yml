@@ -671,13 +671,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TimePlaceModelCreateUpdateRequest'
+              $ref: '#/components/schemas/TimePlaceModelCreateRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/TimePlaceModelCreateUpdateRequest'
+              $ref: '#/components/schemas/TimePlaceModelCreateRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/TimePlaceModelCreateUpdateRequest'
+              $ref: '#/components/schemas/TimePlaceModelCreateRequest'
         required: true
       security:
       - tokenAuth: []
@@ -686,7 +686,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TimePlaceModelCreateUpdate'
+                $ref: '#/components/schemas/TimePlaceModelCreate'
           description: ''
   /api/v1/timeplace/{id}/:
     get:
@@ -724,13 +724,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TimePlaceModelCreateUpdateRequest'
+              $ref: '#/components/schemas/TimePlaceModelUpdateRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/TimePlaceModelCreateUpdateRequest'
+              $ref: '#/components/schemas/TimePlaceModelUpdateRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/TimePlaceModelCreateUpdateRequest'
+              $ref: '#/components/schemas/TimePlaceModelUpdateRequest'
         required: true
       security:
       - tokenAuth: []
@@ -739,7 +739,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TimePlaceModelCreateUpdate'
+                $ref: '#/components/schemas/TimePlaceModelUpdate'
           description: ''
     patch:
       operationId: timeplace_partial_update
@@ -1652,6 +1652,10 @@ components:
           type: string
           format: decimal
           pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+        city:
+          type: string
+          nullable: true
+          maxLength: 100
         radius:
           type: integer
           maximum: 32767
@@ -1766,7 +1770,7 @@ components:
       - id
       - interests
       - user
-    TimePlaceModelCreateUpdate:
+    TimePlaceModelCreate:
       type: object
       description: |-
         Serializer for the TimePlace model that takes interests and
@@ -1814,7 +1818,7 @@ components:
       - longitude
       - radius
       - start
-    TimePlaceModelCreateUpdateRequest:
+    TimePlaceModelCreateRequest:
       type: object
       description: |-
         Serializer for the TimePlace model that takes interests and
@@ -1859,6 +1863,79 @@ components:
       - longitude
       - radius
       - start
+    TimePlaceModelUpdate:
+      type: object
+      description: |-
+        Serializer for the TimePlace model that takes interests and
+        activities as a list of integers and does not include the user
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        radius:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        description:
+          type: string
+          maxLength: 500
+        interests:
+          type: array
+          items:
+            type: integer
+        activities:
+          type: array
+          items:
+            type: integer
+      required:
+      - activities
+      - description
+      - end
+      - id
+      - interests
+      - radius
+      - start
+    TimePlaceModelUpdateRequest:
+      type: object
+      description: |-
+        Serializer for the TimePlace model that takes interests and
+        activities as a list of integers and does not include the user
+      properties:
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        radius:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        description:
+          type: string
+          minLength: 1
+          maxLength: 500
+        interests:
+          type: array
+          items:
+            type: integer
+        activities:
+          type: array
+          items:
+            type: integer
+      required:
+      - activities
+      - description
+      - end
+      - interests
+      - radius
+      - start
     TimePlaceModelView:
       type: object
       description: |-
@@ -1884,6 +1961,10 @@ components:
           type: string
           format: decimal
           pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+        city:
+          type: string
+          nullable: true
+          maxLength: 100
         radius:
           type: integer
           maximum: 32767
