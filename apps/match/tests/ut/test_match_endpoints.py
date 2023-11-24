@@ -171,14 +171,14 @@ class TestMatchEndpoints(APITestCase):
         url = reverse('match-detail', kwargs={'pk': self.user1.id})
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user2token.key)
         response = self.client.get(url)
-        self.assertEqual(response.data['foreign_phone'], 'Hidden')
+        self.assertEqual(response.data['foreign_phone'], None)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
     def test_foreign_user_email_is_hidden(self):
         url = reverse('match-detail', kwargs={'pk': self.user1.id})
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user2token.key)
         response = self.client.get(url)
-        self.assertTrue(response.data['foreign_email'], 'Hidden')
+        self.assertEqual(response.data['foreign_email'], None)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
     def test_chat_accepted_for_users(self):

@@ -520,8 +520,8 @@ paths:
                         activities:
                         - id: 1
                           name: Visiting a Museum
-                      foreign_email: Hidden
-                      foreign_phone: Hidden
+                      foreign_email: null
+                      foreign_phone: null
                       chat_accepted: false
                   summary: Example for a match object
           description: ''
@@ -570,8 +570,8 @@ paths:
                       activities:
                       - id: 1
                         name: Visiting a Museum
-                    foreign_email: Hidden
-                    foreign_phone: Hidden
+                    foreign_email: null
+                    foreign_phone: null
                     chat_accepted: false
                   summary: Example for a match object
           description: ''
@@ -637,15 +637,15 @@ paths:
                       activities:
                       - id: 1
                         name: Visiting a Museum
-                    foreign_email: Hidden
-                    foreign_phone: Hidden
+                    foreign_email: null
+                    foreign_phone: null
                     chat_accepted: false
                   summary: Example for a match object
           description: ''
   /api/v1/match/{id}/share_email/:
     post:
       operationId: match_share_email_create
-      description: API endpoint that allows matches to be viewed or edited.
+      description: Set the email_user_x field to True for the user of the request.
       parameters:
       - in: path
         name: id
@@ -665,7 +665,7 @@ paths:
   /api/v1/match/{id}/share_phone/:
     post:
       operationId: match_share_phone_create
-      description: API endpoint that allows matches to be viewed or edited.
+      description: Set the phone_user_x field to True for the user of the request.
       parameters:
       - in: path
         name: id
@@ -705,6 +705,11 @@ paths:
           description: ''
     post:
       operationId: timeplace_create
+      description: |-
+        Create a new TimePlace.
+                Latitude and Longitude are numbers with up to six decimal places.
+                Latitude needs to be between -90 and 90.
+                Longitude needs to be between -180 and 180.
       tags:
       - timeplace
       requestBody:
@@ -726,7 +731,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TimePlaceModelCreate'
+                $ref: '#/components/schemas/TimePlaceModelView'
           description: ''
   /api/v1/timeplace/{id}/:
     get:
@@ -1810,56 +1815,6 @@ components:
       - id
       - interests
       - user
-    TimePlaceModelCreate:
-      type: object
-      description: |-
-        Serializer to create a TimePlace model instance that takes interests
-        and activities as a list of integers and does not include the user.
-        Automatically fills the city field with the nearest city to the given
-        coordinates in a radius of 100 miles.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        start:
-          type: string
-          format: date-time
-        end:
-          type: string
-          format: date-time
-        latitude:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
-        longitude:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
-        radius:
-          type: integer
-          maximum: 32767
-          minimum: 0
-        description:
-          type: string
-          maxLength: 500
-        interests:
-          type: array
-          items:
-            type: integer
-        activities:
-          type: array
-          items:
-            type: integer
-      required:
-      - activities
-      - description
-      - end
-      - id
-      - interests
-      - latitude
-      - longitude
-      - radius
-      - start
     TimePlaceModelCreateRequest:
       type: object
       description: |-

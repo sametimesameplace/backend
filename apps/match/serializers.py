@@ -47,8 +47,8 @@ from . import models
                         }
                         ]
                     },
-                    "foreign_email": "Hidden",
-                    "foreign_phone": "Hidden",
+                    "foreign_email": None,
+                    "foreign_phone": None,
                     "chat_accepted": False
                     },
         ),
@@ -96,11 +96,11 @@ class MatchModelListRetrieveSerializer(serializers.ModelSerializer):
             if obj.email_user_2:
                 return obj.timeplace_2.user.userprofile.profile_email
             else:
-                return "Hidden"
+                return None
         if obj.email_user_1:
             return obj.timeplace_1.user.userprofile.profile_email
         else:
-            return "Hidden"
+            return None
 
     @extend_schema_field(OpenApiTypes.STR)    
     def get_foreign_phone(self, obj):
@@ -110,11 +110,11 @@ class MatchModelListRetrieveSerializer(serializers.ModelSerializer):
             if obj.phone_user_2:
                 return obj.timeplace_2.user.userprofile.phone
             else:
-                return "Hidden"
+                return None
         if obj.phone_user_1:
             return obj.timeplace_1.user.userprofile.phone
         else:
-            return "Hidden"
+            return None
 
 
 class MatchChatModelSerializer(serializers.ModelSerializer):
