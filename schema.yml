@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: SameTimeSamePlace API
-  version: 0.1.0
+  version: 0.2.0
   description: Find friends for an adventure.
 paths:
   /api/v1/activity/:
@@ -645,7 +645,7 @@ paths:
   /api/v1/match/{id}/share_email/:
     post:
       operationId: match_share_email_create
-      description: API endpoint that allows matches to be viewed or edited.
+      description: Set the email_user_x field to True for the user of the request.
       parameters:
       - in: path
         name: id
@@ -665,7 +665,7 @@ paths:
   /api/v1/match/{id}/share_phone/:
     post:
       operationId: match_share_phone_create
-      description: API endpoint that allows matches to be viewed or edited.
+      description: Set the phone_user_x field to True for the user of the request.
       parameters:
       - in: path
         name: id
