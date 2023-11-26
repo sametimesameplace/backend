@@ -48,8 +48,12 @@ def get_nearest_city(lat: float, long: float) -> str:
         "X-RapidAPI-Key": RAPID_API,
         "X-RapidAPI-Host": "wft-geo-db.p.rapidapi.com"
     }
-
-    conn.request("GET", url, headers=headers)
+    try:
+        conn.request("GET", url, headers=headers)
+    # prevent exception when internet connectivity is limited
+    except TimeoutError:
+        return None
+        
     response = conn.getresponse()
     data = json.loads(response.read().decode())
     try:
