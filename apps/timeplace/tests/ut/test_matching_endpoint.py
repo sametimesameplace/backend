@@ -392,7 +392,7 @@ class TestInterestEndpoints(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 2)
-        # With Radius 10, 6 matches should be found
+        # With Radius 10, all 6 matches should be found
         test_tp.radius = 10
         test_tp.save()
         response = self.client.get(url)
@@ -401,3 +401,29 @@ class TestInterestEndpoints(APITestCase):
         # Delete TimePlace and languages used for this test
         testlang1.delete()
         test_tp.delete()
+
+    def test_create_and_get_a_match_object(self):
+        """Test if a match object between two timeplaces can be created
+        """
+        url = reverse("timeplace-get-match", args=(self.user1_tp1.id, 
+                                                   self.user2_tp1.id))
+        # Test if a user can create a match for a different user
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user3token.key)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        # Test if a user can create a match for his timeplace
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # Creating a match again should return 403 and the match id
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(response.data["match_id"])
+        # User should be able to get the match_id of an existing match object
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data["match_id"])
+        # Test if a user can get a match for a different users timeplace
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user3token.key)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
