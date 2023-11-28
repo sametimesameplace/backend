@@ -2,6 +2,7 @@ import environ
 import json
 from http import client
 from pathlib import Path
+from socket import gaierror
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -51,9 +52,8 @@ def get_nearest_city(lat: float, long: float) -> str:
     try:
         conn.request("GET", url, headers=headers)
     # prevent exception when internet connectivity is limited
-    except TimeoutError:
+    except (TimeoutError, gaierror):
         return None
-        
     response = conn.getresponse()
     data = json.loads(response.read().decode())
     try:
