@@ -35,7 +35,7 @@ class UserLoginView(viewsets.ModelViewSet):
         if not user:
             return Response(
                 {"error": "Password or Username incorrect"},
-                status=status.HTTP_403_FORBIDDEN
+                status=status.HTTP_401_UNAUTHORIZED
             )
 
         token, _ = Token.objects.get_or_create(user=user)
