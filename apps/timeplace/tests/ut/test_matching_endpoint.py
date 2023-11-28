@@ -36,6 +36,13 @@ class TestInterestEndpoints(APITestCase):
         )
         cls.user3token = Token.objects.create(user=cls.user3)
 
+        cls.testuser = usermodels.User.objects.create_user(
+            username="testuser",
+            email="testuser@stsp.com",
+            password="user@2023",
+        )
+        cls.testusertoken = Token.objects.create(user=cls.testuser)
+
         # Create userprofiles for the three users
         cls.user1profile = usermodels.UserProfile.objects.create(
             user = cls.user1,
@@ -50,16 +57,6 @@ class TestInterestEndpoints(APITestCase):
         usermodels.UserLanguage.objects.create(
             userprofile = cls.user1profile,
             language = usermodels.Language.objects.get(pk=1),
-            level = "Fluent"
-        )
-        usermodels.UserLanguage.objects.create(
-            userprofile = cls.user1profile,
-            language = usermodels.Language.objects.get(pk=2),
-            level = "Fluent"
-        )
-        usermodels.UserLanguage.objects.create(
-            userprofile = cls.user1profile,
-            language = usermodels.Language.objects.get(pk=3),
             level = "Fluent"
         )
 
@@ -96,8 +93,30 @@ class TestInterestEndpoints(APITestCase):
         )
         usermodels.UserLanguage.objects.create(
             userprofile = cls.user3profile,
+            language = usermodels.Language.objects.get(pk=1),
+            level = "Fluent"
+        )
+
+        usermodels.UserLanguage.objects.create(
+            userprofile = cls.user3profile,
+            language = usermodels.Language.objects.get(pk=2),
+            level = "Fluent"
+        )
+        usermodels.UserLanguage.objects.create(
+            userprofile = cls.user3profile,
             language = usermodels.Language.objects.get(pk=3),
             level = "Fluent"
+        )
+
+        cls.testuserprofile = usermodels.UserProfile.objects.create(
+            user = cls.testuser,
+            name = "testuser",
+            hometown = "testusertown",
+            slogan = "testuserslogan",
+            birthday = "2003-03-03",
+            gender = "D",
+            phone = "123456",
+            profile_email = "testuser@stsp.com",
         )
 
         # Create some timeplaces
@@ -111,21 +130,21 @@ class TestInterestEndpoints(APITestCase):
             radius=10,
             description="I want to run tests, this is user1_tp1",
         )
-        cls.user1_tp1.interests.add(1, 2)
-        cls.user1_tp1.activities.add(1, 2)
-        
+        cls.user1_tp1.interests.add(1)
+        cls.user1_tp1.activities.add(1)
+
         cls.user1_tp2 = models.TimePlace.objects.create(
             user=cls.user1,
             start="2025-12-01T12:00+01:00",
             end="2025-12-01T15:00+01:00",
             latitude=10.123456,
-            longitude=10.213456,
-            radius=5,
+            longitude=10.123456,
+            radius=10,
             description="I want to run tests, this is user1_tp2",
         )
         cls.user1_tp2.interests.add(1, 2)
-        cls.user1_tp2.activities.add(1)
-        
+        cls.user1_tp2.activities.add(1, 2)
+
         # For user2
         cls.user2_tp1 = models.TimePlace.objects.create(
             user=cls.user2,
@@ -136,9 +155,9 @@ class TestInterestEndpoints(APITestCase):
             radius=10,
             description="I want to run tests, this is user2_tp1",
         )
-        cls.user2_tp1.interests.add(1, 2)
-        cls.user2_tp1.activities.add(1)
-        
+        cls.user2_tp1.interests.add(2)
+        cls.user2_tp1.activities.add(2)
+
         cls.user2_tp2 = models.TimePlace.objects.create(
             user=cls.user2,
             start="2025-12-01T13:00+01:00",
@@ -148,8 +167,8 @@ class TestInterestEndpoints(APITestCase):
             radius=10,
             description="I want to run tests, this is user2_tp2",
         )
-        cls.user2_tp2.interests.add(3)
-        cls.user2_tp2.activities.add(1, 2)
+        cls.user2_tp2.interests.add(2, 3)
+        cls.user2_tp2.activities.add(2, 3)
 
         # For user3
         cls.user3_tp1 = models.TimePlace.objects.create(
@@ -161,20 +180,20 @@ class TestInterestEndpoints(APITestCase):
             radius=10,
             description="I want to run tests, this is user3_tp1",
         )
-        cls.user3_tp1.interests.add(2, 3)
-        cls.user3_tp1.activities.add(1)
-        
+        cls.user3_tp1.interests.add(3)
+        cls.user3_tp1.activities.add(3)
+
         cls.user3_tp2 = models.TimePlace.objects.create(
             user=cls.user3,
             start="2025-12-01T13:00+01:00",
             end="2025-12-01T17:00+01:00",
             latitude=10.123456,
-            longitude=10.123456,
+            longitude=10.193456,
             radius=10,
             description="I want to run tests, this is user3_tp2",
         )
-        cls.user3_tp2.interests.add(3)
-        cls.user3_tp2.activities.add(2)
+        cls.user3_tp2.interests.add(3, 4)
+        cls.user3_tp2.activities.add(3, 4)
 
     def test_user_can_get_own_matches(self):
         """Test if user can get matches for his own timeplaces.
@@ -189,5 +208,222 @@ class TestInterestEndpoints(APITestCase):
         """
         url = reverse("timeplace-matches", args=(self.user2_tp1.id,))
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_matches_by_interests(self):
+        """Test if matches are returned according to interests
+        """
+        # Set up all languages and all activities
+        testlang1 = usermodels.UserLanguage.objects.create(
+            userprofile = self.testuserprofile,
+            language = usermodels.Language.objects.get(pk=1),
+            level = "Fluent"
+        )
+        testlang2 = usermodels.UserLanguage.objects.create(
+            userprofile = self.testuserprofile,
+            language = usermodels.Language.objects.get(pk=2),
+            level = "Fluent"
+        )
+        testlang3 = usermodels.UserLanguage.objects.create(
+            userprofile = self.testuserprofile,
+            language = usermodels.Language.objects.get(pk=3),
+            level = "Fluent"
+        )
+        test_tp = models.TimePlace.objects.create(
+            user=self.testuser,
+            start="2025-12-01T12:00+01:00",
+            end="2025-12-01T15:00+01:00",
+            latitude=10.123456,
+            longitude=10.123456,
+            radius=10,
+            description="I want to test interestmatching",
+        )
+        test_tp.activities.add(1, 2, 3, 4)
+        url = reverse("timeplace-matches", args=(test_tp.id,))
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.testusertoken.key)
+        # Add unused interest to verify no matches
+        test_tp.interests.add(5)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 0)
+        # Only add one interest to check if matches work
+        test_tp.interests.add(1)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 2)
+        # Test if matching with multiple interests works
+        test_tp.interests.add(3)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 5)
+        # Delete TimePlace and languages used for this test
+        testlang1.delete()
+        testlang2.delete()
+        testlang3.delete()
+        test_tp.delete()
+
+    def test_get_matches_by_activities(self):
+        """Test if matches are returned according to interests
+        """
+        # Set up all languages and all interests
+        testlang1 = usermodels.UserLanguage.objects.create(
+            userprofile = self.testuserprofile,
+            language = usermodels.Language.objects.get(pk=1),
+            level = "Fluent"
+        )
+        testlang2 = usermodels.UserLanguage.objects.create(
+            userprofile = self.testuserprofile,
+            language = usermodels.Language.objects.get(pk=2),
+            level = "Fluent"
+        )
+        testlang3 = usermodels.UserLanguage.objects.create(
+            userprofile = self.testuserprofile,
+            language = usermodels.Language.objects.get(pk=3),
+            level = "Fluent"
+        )
+        test_tp = models.TimePlace.objects.create(
+            user=self.testuser,
+            start="2025-12-01T12:00+01:00",
+            end="2025-12-01T15:00+01:00",
+            latitude=10.123456,
+            longitude=10.123456,
+            radius=10,
+            description="I want to test interestmatching",
+        )
+        test_tp.interests.add(1, 2, 3, 4)
+        url = reverse("timeplace-matches", args=(test_tp.id,))
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.testusertoken.key)
+        # Add unused activity to verify no matches
+        test_tp.activities.add(5)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 0)
+        # Only add one activity to check if matches work
+        test_tp.activities.add(1)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 2)
+        # Test if matching with multiple activities works
+        test_tp.activities.add(3)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 5)
+        # Delete TimePlace and languages used for this test
+        testlang1.delete()
+        testlang2.delete()
+        testlang3.delete()
+        test_tp.delete()
+
+    def test_get_matches_by_languages(self):
+        """Test if matches are returned according to languages
+        """
+        # Set up all activities and all interests
+        test_tp = models.TimePlace.objects.create(
+            user=self.testuser,
+            start="2025-12-01T12:00+01:00",
+            end="2025-12-01T15:00+01:00",
+            latitude=10.123456,
+            longitude=10.123456,
+            radius=10,
+            description="I want to test interestmatching",
+        )
+        test_tp.interests.add(1, 2, 3, 4)
+        test_tp.activities.add(1, 2, 3, 4)
+        url = reverse("timeplace-matches", args=(test_tp.id,))
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.testusertoken.key)
+        # Add unused activity to verify no matches
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 0)
+        # Only add one language to check if matches work
+        testlang1 = usermodels.UserLanguage.objects.create(
+            userprofile = self.testuserprofile,
+            language = usermodels.Language.objects.get(pk=3),
+            level = "Fluent"
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 2)
+        # Test if matching with multiple languages works
+        testlang2 = usermodels.UserLanguage.objects.create(
+            userprofile = self.testuserprofile,
+            language = usermodels.Language.objects.get(pk=1),
+            level = "Fluent"
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 6)
+        # Delete TimePlace and languages used for this test
+        testlang1.delete()
+        testlang2.delete()
+        test_tp.delete()
+
+    def test_get_matches_by_coordinates(self):
+        """Test if matches are returned according to coordinates and radius
+        """
+        # Set up timeplace with small radius and small radius
+        test_tp = models.TimePlace.objects.create(
+            user=self.testuser,
+            start="2025-12-01T12:00+01:00",
+            end="2025-12-01T15:00+01:00",
+            latitude=10.123456,
+            longitude=10.173456,
+            radius=1,
+            description="I want to test interestmatching",
+        )
+        # Set up all activities and all interests
+        test_tp.interests.add(1, 2, 3, 4)
+        test_tp.activities.add(1, 2, 3, 4)
+        testlang1 = usermodels.UserLanguage.objects.create(
+            userprofile = self.testuserprofile,
+            language = usermodels.Language.objects.get(pk=1),
+            level = "Fluent"
+        )
+        url = reverse("timeplace-matches", args=(test_tp.id,))
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.testusertoken.key)
+        # With Radius 1, no matches should be found
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 0)
+        # With Radius 4, 2 matches should be found
+        test_tp.radius = 4
+        test_tp.save()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 2)
+        # With Radius 10, all 6 matches should be found
+        test_tp.radius = 10
+        test_tp.save()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 6)
+        # Delete TimePlace and languages used for this test
+        testlang1.delete()
+        test_tp.delete()
+
+    def test_create_and_get_a_match_object(self):
+        """Test if a match object between two timeplaces can be created
+        """
+        url = reverse("timeplace-get-match", args=(self.user1_tp1.id, 
+                                                   self.user2_tp1.id))
+        # Test if a user can create a match for a different user
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user3token.key)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        # Test if a user can create a match for his timeplace
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # Creating a match again should return 403 and the match id
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(response.data["match_id"])
+        # User should be able to get the match_id of an existing match object
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data["match_id"])
+        # Test if a user can get a match for a different users timeplace
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user3token.key)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
