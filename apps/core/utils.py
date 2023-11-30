@@ -34,7 +34,7 @@ def get_nearest_city(lat: float, long: float) -> str:
     try:
         RAPID_API = env.str("RAPID_API")
     except ImproperlyConfigured:
-        RAPID_API = "no_key_found"
+        return None
 
     conn = client.HTTPSConnection("wft-geo-db.p.rapidapi.com", timeout=2)
     
