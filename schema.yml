@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: SameTimeSamePlace API
-  version: 0.2.0
+  version: 0.3.0
   description: Find friends for an adventure.
 paths:
   /api/v1/activity/:
@@ -833,6 +833,66 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/timeplace/{id}/chats/:
+    get:
+      operationId: timeplace_chats_list
+      description: View all active match-objects of a Timeplace
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this time place.
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - timeplace
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMatchModelListRetrieveList'
+              examples:
+                ExampleForAMatchObject:
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 1
+                      own_timeplace:
+                        id: 13
+                        user: 3
+                        description: Want to go to the Train Museum
+                        interests:
+                        - id: 2
+                          name: Trains
+                        activities:
+                        - id: 1
+                          name: Visiting a Museum
+                      foreign_timeplace:
+                        id: 2
+                        user: 2
+                        description: Want to visit some kind of Museum
+                        interests:
+                        - id: 2
+                          name: Trains
+                        activities:
+                        - id: 1
+                          name: Visiting a Museum
+                      foreign_email: null
+                      foreign_phone: null
+                      chat_accepted: false
+                  summary: Example for a match object
+          description: ''
   /api/v1/timeplace/{id}/match/{timeplace_pk}/:
     get:
       operationId: timeplace_match_retrieve

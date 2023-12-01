@@ -12,6 +12,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view, inline_seri
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, OpenApiResponse
 
 from apps.match.models import Match
+from apps.match.serializers import MatchModelListRetrieveSerializer
 from . import models, permissions, serializers
 
 
@@ -233,3 +234,28 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
             {"match_id": match_obj.id},
             status=status.HTTP_201_CREATED
         )
+
+    @extend_schema(responses=MatchModelListRetrieveSerializer(many=True))
+    @action(detail=True, methods=["GET"], url_path="chats")
+    def chats(self, request, *args, **kwargs):
+        """View all active match-objects of a Timeplace
+        """
+        timeplace = self.get_object()
+        queryset = (Match.objects
+                    .exclude(deleted=True)
+                    .filter(Q(timeplace_1=timeplace) |
+                            Q(timeplace_2=timeplace))
+                    .order_by("-created_at")
+                    )
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = MatchModelListRetrieveSerializer(page,
+                                            context={'request': request},
+                                            many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = MatchModelListRetrieveSerializer(queryset,
+                                            context={'request': request},
+                                            many=True)
+        return Response(serializer.data)
