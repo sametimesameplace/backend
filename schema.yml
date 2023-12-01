@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: SameTimeSamePlace API
-  version: 0.2.0
+  version: 0.3.0
   description: Find friends for an adventure.
 paths:
   /api/v1/activity/:
