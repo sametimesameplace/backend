@@ -161,12 +161,14 @@ class TimePlaceMatchSerializer(serializers.ModelSerializer):
     """
     interests = InterestModelSerializer(many=True)
     activities = ActivityModelSerializer(many=True)
+    username = serializers.CharField(source="user.userprofile.name")
 
     class Meta:
         model = models.TimePlace
         fields = [
             "id",
             "user",
+            "username",
             "description",
             "interests",
             "activities",
