@@ -16,6 +16,7 @@ from . import models
                     "own_timeplace": {
                         "id": 13,
                         "user": 3,
+                        "username": "Anna",
                         "description": "Want to go to the Train Museum",
                         "interests": [
                         {
@@ -33,6 +34,7 @@ from . import models
                     "foreign_timeplace": {
                         "id": 2,
                         "user": 2,
+                        "username": "Betty",
                         "description": "Want to visit some kind of Museum",
                         "interests": [
                         {
