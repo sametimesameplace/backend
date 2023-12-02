@@ -40,7 +40,7 @@ REST_FRAMEWORK['PAGE_SIZE'] = 50
 SPECTACULAR_SETTINGS = {
     'TITLE': 'SameTimeSamePlace API',
     'DESCRIPTION': 'Find friends for an adventure.',
-    'VERSION': '0.3.0',
+    'VERSION': '0.3.1',
     'SERVE_INCLUDE_SCHEMA': False,
     # Split components into request and response parts where appropriate
     'COMPONENT_SPLIT_REQUEST': True,

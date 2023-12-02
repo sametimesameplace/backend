@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: SameTimeSamePlace API
-  version: 0.3.0
+  version: 0.3.1
   description: Find friends for an adventure.
 paths:
   /api/v1/activity/:
@@ -503,6 +503,7 @@ paths:
                       own_timeplace:
                         id: 13
                         user: 3
+                        username: Anna
                         description: Want to go to the Train Museum
                         interests:
                         - id: 2
@@ -513,6 +514,7 @@ paths:
                       foreign_timeplace:
                         id: 2
                         user: 2
+                        username: Betty
                         description: Want to visit some kind of Museum
                         interests:
                         - id: 2
@@ -553,6 +555,7 @@ paths:
                     own_timeplace:
                       id: 13
                       user: 3
+                      username: Anna
                       description: Want to go to the Train Museum
                       interests:
                       - id: 2
@@ -563,6 +566,7 @@ paths:
                     foreign_timeplace:
                       id: 2
                       user: 2
+                      username: Betty
                       description: Want to visit some kind of Museum
                       interests:
                       - id: 2
@@ -620,6 +624,7 @@ paths:
                     own_timeplace:
                       id: 13
                       user: 3
+                      username: Anna
                       description: Want to go to the Train Museum
                       interests:
                       - id: 2
@@ -630,6 +635,7 @@ paths:
                     foreign_timeplace:
                       id: 2
                       user: 2
+                      username: Betty
                       description: Want to visit some kind of Museum
                       interests:
                       - id: 2
@@ -871,6 +877,7 @@ paths:
                       own_timeplace:
                         id: 13
                         user: 3
+                        username: Anna
                         description: Want to go to the Train Museum
                         interests:
                         - id: 2
@@ -881,6 +888,7 @@ paths:
                       foreign_timeplace:
                         id: 2
                         user: 2
+                        username: Betty
                         description: Want to visit some kind of Museum
                         interests:
                         - id: 2
@@ -1858,6 +1866,8 @@ components:
           readOnly: true
         user:
           type: integer
+        username:
+          type: string
         description:
           type: string
           maxLength: 500
@@ -1875,6 +1885,7 @@ components:
       - id
       - interests
       - user
+      - username
     TimePlaceModelCreateRequest:
       type: object
       description: |-
