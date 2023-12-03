@@ -94,16 +94,24 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
         Returns:
             bool: True if match, False if not.
         """
-        # Check if the distance between the timeplaces is within the smallest radius
-        radius = min(main_tp.radius, check_tp.radius)
-        if radius < distance((main_tp.latitude, main_tp.longitude),
-                             (check_tp.latitude, check_tp.longitude)).km:
-            return False
         # Check if there is at least one overlapping interest
         if not main_tp.interests.all().intersection(check_tp.interests.all()):
             return False
         # Check if there is at least one overlapping activity
         if not main_tp.activities.all().intersection(check_tp.activities.all()):
+            return False
+        # Check if the distance between the timeplaces is within the smallest radius
+        radius = min(main_tp.radius, check_tp.radius)
+        if radius < distance((main_tp.latitude, main_tp.longitude),
+                             (check_tp.latitude, check_tp.longitude)).km:
+            return False
+        check_query = (Match.objects
+                    .filter((Q(timeplace_1=main_tp) |
+                            Q(timeplace_2=main_tp)) &
+                            (Q(timeplace_1=check_tp) |
+                            Q(timeplace_2=check_tp))
+                    ))
+        if check_query:
             return False
         return True
     
