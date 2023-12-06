@@ -212,6 +212,12 @@ class TimePlaceViewSet(viewsets.ModelViewSet):
         own_tp = self.get_object()
         other_tp = models.TimePlace.objects.get(pk=timeplace_pk)
 
+        if own_tp.user == other_tp.user:
+            return Response(
+                {"error": "Can't match with same user"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         # Check if a match between the two timeplaces already exists
         queryset = Match.objects.filter(
             (Q(timeplace_1=own_tp) | Q(timeplace_1=other_tp)) &
