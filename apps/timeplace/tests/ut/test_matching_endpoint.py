@@ -5,6 +5,7 @@ from rest_framework.test import APITestCase
 
 from apps.timeplace import models
 from apps.user import models as usermodels
+from apps.match import models as matchmodels
 
 
 class TestInterestEndpoints(APITestCase):
@@ -405,7 +406,7 @@ class TestInterestEndpoints(APITestCase):
     def test_create_and_get_a_match_object(self):
         """Test if a match object between two timeplaces can be created
         """
-        url = reverse("timeplace-get-match", args=(self.user1_tp1.id, 
+        url = reverse("timeplace-get-match", args=(self.user1_tp1.id,
                                                    self.user2_tp1.id))
         # Test if a user can create a match for a different user
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user3token.key)
@@ -437,3 +438,40 @@ class TestInterestEndpoints(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_existing_matches_excluded_from_matching(self):
+        """Test if matches with a match object appear in potential matches list
+        """
+        # Set up timeplace to match with several others
+        test_tp = models.TimePlace.objects.create(
+            user=self.testuser,
+            start="2025-12-01T12:00+01:00",
+            end="2025-12-01T15:00+01:00",
+            latitude=10.123456,
+            longitude=10.173456,
+            radius=10,
+            description="I want to test interestmatching",
+        )
+        # Set up all activities and all interests
+        test_tp.interests.add(1, 2, 3, 4)
+        test_tp.activities.add(1, 2, 3, 4)
+        testlang1 = usermodels.UserLanguage.objects.create(
+            userprofile = self.testuserprofile,
+            language = usermodels.Language.objects.get(pk=1),
+            level = "Fluent"
+        )
+        url = reverse("timeplace-matches", args=(test_tp.id,))
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.testusertoken.key)
+        # Without match object, all 6 matches should be found
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 6)
+        # If match object exists, match shouldn't be found
+        matchmodels.Match.objects.create(timeplace_1=test_tp, 
+                                         timeplace_2=self.user1_tp1)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 5)
+        # Delete TimePlace and languages used for this test
+        testlang1.delete()
+        test_tp.delete()

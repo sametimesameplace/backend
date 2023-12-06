@@ -227,7 +227,7 @@ class TestUserLanguageEndpoints(APITestCase):
         self.language = Language.objects.create(lang="English")
 
         self.url_list = reverse("userlanguage-list")
-        
+
     def create_user_language_data(self, level='Fluent'):
         """
         Helper method to create user language data.
@@ -243,7 +243,7 @@ class TestUserLanguageEndpoints(APITestCase):
         Helper method to assert the status code of a response.
         """
         self.assertEqual(response.status_code, expected_status)
-    
+
     def test_create_user_language_authenticated(self):
         """
         Test the creation of a UserLanguage object when the user is authenticated.
@@ -263,8 +263,8 @@ class TestUserLanguageEndpoints(APITestCase):
 
         response = self.client.post(self.url_list, data=user_language_data, format='json')
         self.assert_status_code(response, status.HTTP_401_UNAUTHORIZED)
-        
-        
+
+
     def test_list_user_languages_authenticated(self):
         """
         Test listing his own UserLanguages when the user is authenticated.
@@ -298,19 +298,19 @@ class TestUserLanguageEndpoints(APITestCase):
         self.client.force_authenticate(user=self.user)
 
         user_language_data = self.create_user_language_data()
-        
+
         response_create = self.client.post(self.url_list, data=user_language_data, format='json')
-        
+
         self.assertEqual(response_create.status_code, status.HTTP_201_CREATED)
 
         user_language_id = response_create.data['id']
         updated_data = {'level': 'Preferred'}
         url_update = reverse("userlanguage-detail", args=[user_language_id])
         response_update = self.client.patch(url_update, data=updated_data, format='json')
-        
+
         self.assertEqual(response_update.status_code, status.HTTP_200_OK)
         self.assertEqual(response_update.data['level'], 'Preferred')
-        
+
     def test_delete_user_language_authenticated(self):
         """
         Test that an authenticated user can delete their own UserLanguage object. 
@@ -318,7 +318,7 @@ class TestUserLanguageEndpoints(APITestCase):
         self.client.force_authenticate(user=self.user)
 
         user_language_data = self.create_user_language_data()
-        
+
         response_create = self.client.post(self.url_list, data=user_language_data, format='json')
         self.assertEqual(response_create.status_code, status.HTTP_201_CREATED)
 
@@ -326,5 +326,157 @@ class TestUserLanguageEndpoints(APITestCase):
         url_delete = reverse("userlanguage-detail", args=[user_language_id])
         response_delete = self.client.delete(url_delete)
         self.assertEqual(response_delete.status_code, status.HTTP_204_NO_CONTENT)
-        
-    
+
+
+class TestUserLogin(APITestCase):
+    """Test user login
+    """
+    def test_login_same_case(self):
+        """Tests that a user can login with the same case as on creation
+        """
+
+        url = reverse("user-list")
+        response = self.client.post(
+            url,
+            data={
+                "username": "testuser",
+                "password": "testpassword",
+                "email": "test@example.com",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        url = reverse("login-token")
+        response = self.client.post(
+            url,
+            data={
+                "username": "testuser",
+                "password": "testpassword",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data["token"])
+
+    def test_login_upper_case_created_lower(self):
+        """Tests that a user can login with the upper case if created lowercase
+        """
+
+        url = reverse("user-list")
+        response = self.client.post(
+            url,
+            data={
+                "username": "testupperuser",
+                "password": "testpassword",
+                "email": "test@example.com",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        url = reverse("login-token")
+        response = self.client.post(
+            url,
+            data={
+                "username": "Testupperuser",
+                "password": "testpassword",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data["token"])
+
+    def test_login_lower_case_created_upper(self):
+        """Tests that a user can login with the lower case if created uppercase
+        """
+
+        url = reverse("user-list")
+        response = self.client.post(
+            url,
+            data={
+                "username": "Testloweruser",
+                "password": "testpassword",
+                "email": "test@example.com",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        url = reverse("login-token")
+        response = self.client.post(
+            url,
+            data={
+                "username": "testloweruser",
+                "password": "testpassword",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data["token"])
+
+    def test_login_email_same_case(self):
+        """Tests that a user can login with email in the same case as on creation
+        """
+
+        url = reverse("user-list")
+        response = self.client.post(
+            url,
+            data={
+                "username": "testuser",
+                "password": "testpassword",
+                "email": "test@example.com",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        url = reverse("login-token")
+        response = self.client.post(
+            url,
+            data={
+                "username": "test@example.com",
+                "password": "testpassword",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data["token"])
+
+    def test_login_email_upper_case_created_lower(self):
+        """Tests that a user can login with uppercase email after creating lowercase
+        """
+
+        url = reverse("user-list")
+        response = self.client.post(
+            url,
+            data={
+                "username": "uppertestuser",
+                "password": "testpassword",
+                "email": "uppertest@example.com",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        url = reverse("login-token")
+        response = self.client.post(
+            url,
+            data={
+                "username": "UpperTest@example.com",
+                "password": "testpassword",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data["token"])
+
+    def test_login_email_lower_case_created_upper(self):
+        """Tests that a user can login with lowercase email after creating uppercase
+        """
+
+        url = reverse("user-list")
+        response = self.client.post(
+            url,
+            data={
+                "username": "lowertestuser",
+                "password": "testpassword",
+                "email": "LowerTest@example.com",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        url = reverse("login-token")
+        response = self.client.post(
+            url,
+            data={
+                "username": "lowertest@example.com",
+                "password": "testpassword",
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data["token"])

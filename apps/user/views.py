@@ -25,7 +25,7 @@ class UserLoginView(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        username = serializer.validated_data['username']
+        username = serializer.validated_data['username'].lower()
         password = serializer.validated_data['password']
 
         user = authenticate(
