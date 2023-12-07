@@ -42,6 +42,14 @@ class UserLanguageModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.UserLanguage
+        fields = ('id', 'language', 'level')
+
+
+class UserLanguageModelAdminSerializer(serializers.ModelSerializer):
+    language = serializers.StringRelatedField()
+
+    class Meta:
+        model = models.UserLanguage
         fields = ('id', 'userprofile', 'language', 'level')
 
 
