@@ -429,6 +429,16 @@ class TestInterestEndpoints(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_create_match_for_same_user(self):
+        """Test if a match object can be created for timeplaces of the same user
+        """
+        url = reverse("timeplace-get-match", args=(self.user1_tp1.id,
+                                                   self.user1_tp2.id))
+        # Test if a user can create a match between his own timeplaces
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.user1token.key)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     def test_existing_matches_excluded_from_matching(self):
         """Test if matches with a match object appear in potential matches list
         """
