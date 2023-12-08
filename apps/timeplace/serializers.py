@@ -1,8 +1,8 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 import pytz
 from rest_framework import serializers
 
-from apps.user.serializers import UserModelSerializer
+from apps.user.serializers import UserModelSerializer, UserLanguageModelSerializer
 from apps.core.utils import get_nearest_city
 from . import models
 
@@ -162,6 +162,11 @@ class TimePlaceMatchSerializer(serializers.ModelSerializer):
     interests = InterestModelSerializer(many=True)
     activities = ActivityModelSerializer(many=True)
     username = serializers.CharField(source="user.userprofile.name")
+    gender = serializers.CharField(source="user.userprofile.gender")
+    slogan = serializers.CharField(source="user.userprofile.slogan")
+    languages = UserLanguageModelSerializer(many=True,
+                                            source="user.userprofile.user_language")
+    age = serializers.SerializerMethodField()
 
     class Meta:
         model = models.TimePlace
@@ -169,7 +174,18 @@ class TimePlaceMatchSerializer(serializers.ModelSerializer):
             "id",
             "user",
             "username",
+            "age",
+            "languages",
+            "gender",
+            "slogan",
             "description",
             "interests",
             "activities",
         ]
+
+    def get_age(self, obj) -> int:
+        today = date.today()
+        birthdate = obj.user.userprofile.birthday
+        age = today.year - birthdate.year - \
+            ((today.month, today.day) < (birthdate.month, birthdate.day))
+        return age
