@@ -37,11 +37,17 @@ def get_nearest_city(lat: float, long: float) -> str:
         return None
 
     conn = client.HTTPSConnection("wft-geo-db.p.rapidapi.com", timeout=2)
-    
+
+    # we need a + in the url if the longitude is not negative
+    if long < 0:
+        glue = ""
+    else:
+        glue = "%2B"
+
     # https://rapidapi.com/blog/how-to-use-geodb-cities-api/
     url = ("/v1/geo/locations/"
            + str(lat)
-           + "%2B"
+           + glue
            + str(long)
            + "/nearbyCities?limit=1&radius=100"
     )
@@ -60,5 +66,5 @@ def get_nearest_city(lat: float, long: float) -> str:
         city = data["data"][0]["city"]
     except:
         city = None
-        
+
     return city
