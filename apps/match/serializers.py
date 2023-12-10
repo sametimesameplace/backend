@@ -17,6 +17,21 @@ from . import models
                         "id": 13,
                         "user": 3,
                         "username": "Anna",
+                        "age": 19,
+                        "languages": [
+                        {
+                            "id": 4,
+                            "language": "Albanian",
+                            "level": "Fluent"
+                        },
+                        {
+                            "id": 6,
+                            "language": "German",
+                            "level": "Learning"
+                        }
+                        ],
+                        "gender": "D",
+                        "slogan": "Christmas is coming to town",
                         "description": "Want to go to the Train Museum",
                         "interests": [
                         {
@@ -35,6 +50,21 @@ from . import models
                         "id": 2,
                         "user": 2,
                         "username": "Betty",
+                        "age": 25,
+                        "languages": [
+                        {
+                            "id": 2,
+                            "language": "Albanian",
+                            "level": "Fluent"
+                        },
+                        {
+                            "id": 16,
+                            "language": "English",
+                            "level": "Learning"
+                        }
+                        ],
+                        "gender": "F",
+                        "slogan": "Every API has a call!",
                         "description": "Want to visit some kind of Museum",
                         "interests": [
                         {

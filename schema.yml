@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: SameTimeSamePlace API
-  version: 0.3.1
+  version: 0.3.2
   description: Find friends for an adventure.
 paths:
   /api/v1/activity/:
@@ -504,6 +504,16 @@ paths:
                         id: 13
                         user: 3
                         username: Anna
+                        age: 19
+                        languages:
+                        - id: 4
+                          language: Albanian
+                          level: Fluent
+                        - id: 6
+                          language: German
+                          level: Learning
+                        gender: D
+                        slogan: Christmas is coming to town
                         description: Want to go to the Train Museum
                         interests:
                         - id: 2
@@ -515,6 +525,16 @@ paths:
                         id: 2
                         user: 2
                         username: Betty
+                        age: 25
+                        languages:
+                        - id: 2
+                          language: Albanian
+                          level: Fluent
+                        - id: 16
+                          language: English
+                          level: Learning
+                        gender: F
+                        slogan: Every API has a call!
                         description: Want to visit some kind of Museum
                         interests:
                         - id: 2
@@ -556,6 +576,16 @@ paths:
                       id: 13
                       user: 3
                       username: Anna
+                      age: 19
+                      languages:
+                      - id: 4
+                        language: Albanian
+                        level: Fluent
+                      - id: 6
+                        language: German
+                        level: Learning
+                      gender: D
+                      slogan: Christmas is coming to town
                       description: Want to go to the Train Museum
                       interests:
                       - id: 2
@@ -567,6 +597,16 @@ paths:
                       id: 2
                       user: 2
                       username: Betty
+                      age: 25
+                      languages:
+                      - id: 2
+                        language: Albanian
+                        level: Fluent
+                      - id: 16
+                        language: English
+                        level: Learning
+                      gender: F
+                      slogan: Every API has a call!
                       description: Want to visit some kind of Museum
                       interests:
                       - id: 2
@@ -625,6 +665,16 @@ paths:
                       id: 13
                       user: 3
                       username: Anna
+                      age: 19
+                      languages:
+                      - id: 4
+                        language: Albanian
+                        level: Fluent
+                      - id: 6
+                        language: German
+                        level: Learning
+                      gender: D
+                      slogan: Christmas is coming to town
                       description: Want to go to the Train Museum
                       interests:
                       - id: 2
@@ -636,6 +686,16 @@ paths:
                       id: 2
                       user: 2
                       username: Betty
+                      age: 25
+                      languages:
+                      - id: 2
+                        language: Albanian
+                        level: Fluent
+                      - id: 16
+                        language: English
+                        level: Learning
+                      gender: F
+                      slogan: Every API has a call!
                       description: Want to visit some kind of Museum
                       interests:
                       - id: 2
@@ -878,6 +938,16 @@ paths:
                         id: 13
                         user: 3
                         username: Anna
+                        age: 19
+                        languages:
+                        - id: 4
+                          language: Albanian
+                          level: Fluent
+                        - id: 6
+                          language: German
+                          level: Learning
+                        gender: D
+                        slogan: Christmas is coming to town
                         description: Want to go to the Train Museum
                         interests:
                         - id: 2
@@ -889,6 +959,16 @@ paths:
                         id: 2
                         user: 2
                         username: Betty
+                        age: 25
+                        languages:
+                        - id: 2
+                          language: Albanian
+                          level: Fluent
+                        - id: 16
+                          language: English
+                          level: Learning
+                        gender: F
+                        slogan: Every API has a call!
                         description: Want to visit some kind of Museum
                         interests:
                         - id: 2
@@ -1788,8 +1868,6 @@ components:
     PatchedUserLanguageModelRequest:
       type: object
       properties:
-        userprofile:
-          type: integer
         level:
           $ref: '#/components/schemas/LevelEnum'
     PatchedUserModelRequest:
@@ -1868,6 +1946,17 @@ components:
           type: integer
         username:
           type: string
+        age:
+          type: integer
+          readOnly: true
+        languages:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserLanguageModel'
+        gender:
+          type: string
+        slogan:
+          type: string
         description:
           type: string
           maxLength: 500
@@ -1881,9 +1970,13 @@ components:
             $ref: '#/components/schemas/ActivityModel'
       required:
       - activities
+      - age
       - description
+      - gender
       - id
       - interests
+      - languages
+      - slogan
       - user
       - username
     TimePlaceModelCreateRequest:
@@ -2091,8 +2184,6 @@ components:
         id:
           type: integer
           readOnly: true
-        userprofile:
-          type: integer
         language:
           type: string
           readOnly: true
@@ -2102,17 +2193,13 @@ components:
       - id
       - language
       - level
-      - userprofile
     UserLanguageModelRequest:
       type: object
       properties:
-        userprofile:
-          type: integer
         level:
           $ref: '#/components/schemas/LevelEnum'
       required:
       - level
-      - userprofile
     UserLogin:
       type: object
       description: ensures that both the username and password fields are present

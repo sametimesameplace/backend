@@ -103,7 +103,9 @@ class UserLanguageViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     
     def get_serializer_class(self):
-        if self.action in ("create", "update"):
+        if self.request.user.is_superuser:
+            return serializers.UserLanguageModelAdminSerializer
+        elif self.action in ("create", "update"):
             return serializers.UserLanguageCreateUpdateSerializer
         return serializers.UserLanguageModelSerializer
     
