@@ -1,6 +1,6 @@
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Build paths inside the project like this: BASE_DIR / "subdir".
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Application definition
@@ -23,11 +23,12 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
+    "drf_spectacular",
 ]
 
 INSTALLED_APPS = [*DEFAULT_APPS, *CUSTOM_APPS, *THIRD_PARTY_APPS]
 
-AUTHENTICATION_BACKENDS = ['apps.user.backends.EmailOrUsernameModelBackend']
+AUTHENTICATION_BACKENDS = ["apps.user.backends.EmailOrUsernameModelBackend"]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -62,7 +63,10 @@ TEMPLATES = [
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
-    ]
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 50,    
 }
 
 
@@ -104,7 +108,25 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # needed to use the user model from the user app
-AUTH_USER_MODEL = 'user.User'
+AUTH_USER_MODEL = "user.User"
 
 # Encrypt Cookies on the client
 SESSION_COOKIE_SECURE = True
+
+# Settings for drf_spectacular
+SPECTACULAR_SETTINGS = {
+    "TITLE": "SameTimeSamePlace API",
+    "DESCRIPTION": "Find friends for an adventure.",
+    "VERSION": "0.3.1",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # Split components into request and response parts where appropriate
+    "COMPONENT_SPLIT_REQUEST": True,
+    # Aid client generator targets that have trouble with read-only properties.
+    "COMPONENT_NO_READ_ONLY_REQUIRED": False,
+    # Create separate components for PATCH endpoints (without required list)
+    "COMPONENT_SPLIT_PATCH": True,
+    # Optional list of servers.
+    # Each entry MUST contain "url", MAY contain "description", "variables"
+    # e.g. [{"url": "https://example.com/v1", "description": "Text"}, ...]
+    # "SERVERS": [{"url": "http://localhost:8000/", "description": "Local Dev Server"},],
+}
